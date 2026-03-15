@@ -105,14 +105,14 @@ const slides = [
           <div className="border border-green-800 rounded-xl p-6 bg-green-950/20">
             <div className="text-green-400 text-xs uppercase tracking-widest mb-2 font-bold">Layer 1 &mdash; Regex Engine</div>
             <div className="text-4xl font-bold text-white mb-2">185+</div>
-            <div className="text-sm text-zinc-400">attack patterns scanned instantly. 120 base + 65 from Augustus open source library.</div>
-            <div className="mt-3 text-xs text-green-500">Fast. Free. Deterministic. Can&apos;t be tricked.</div>
+            <div className="text-sm text-zinc-400">attack patterns. 120 hand-built + 65 from Augustus open source library (Apache 2.0).</div>
+            <div className="mt-3 text-xs text-green-500">Instant. Deterministic. Immune to prompt injection.</div>
           </div>
           <div className="border border-purple-800 rounded-xl p-6 bg-purple-950/20">
             <div className="text-purple-400 text-xs uppercase tracking-widest mb-2 font-bold">Layer 2 &mdash; AI Deep Scan</div>
             <div className="text-4xl font-bold text-white mb-2">Claude</div>
             <div className="text-sm text-zinc-400">Semantic analysis reads prompts like an AI reads them. Catches what regex can&apos;t.</div>
-            <div className="mt-3 text-xs text-purple-400">Novel findings auto-generate new regex patterns.</div>
+            <div className="mt-3 text-xs text-purple-400">Auto-learning: novel findings become new regex patterns. Gets smarter every scan.</div>
           </div>
         </div>
         <div className="mt-8 text-sm text-zinc-500 text-center max-w-lg">

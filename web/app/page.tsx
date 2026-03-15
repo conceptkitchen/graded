@@ -190,8 +190,9 @@ export default function Home() {
               Trust grades for the <span className="text-green-500">AI age</span>.
             </h1>
             <p className="text-zinc-400 text-sm sm:text-lg max-w-xl mx-auto">
-              Like a restaurant health grade for AI prompts. Scan for injection attacks,
-              credential harvesting, jailbreaks, and more.
+              Millions of prompts shared daily. Nobody checks if they&apos;re safe.
+              <br className="hidden sm:block" />
+              Graded scans any prompt and gives it an A-F trust score. Instantly.
             </p>
           </div>
 
@@ -422,19 +423,19 @@ export default function Home() {
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                icon: "\uD83D\uDD0D",
-                title: "185+ Attack Patterns",
-                desc: "120 base checks across 8 categories + 65 open source patterns from Augustus (praetorian-inc). Covers DAN jailbreaks, ChatML injection, payload splitting, RAG poisoning, steganography, and more.",
-              },
-              {
                 icon: "\uD83C\uDFC6",
                 title: "A-F Trust Grades",
-                desc: "Restaurant health inspection model. Instant, visual, actionable. A means safe. F means dangerous.",
+                desc: "One glance. You check the letter grade before you eat at a restaurant. Now check it before you run a prompt.",
+              },
+              {
+                icon: "\uD83D\uDD0D",
+                title: "185+ Attack Patterns",
+                desc: "8 security categories. 120 base + 65 open source patterns. DAN jailbreaks, ChatML injection, RAG poisoning, steganography, and more.",
               },
               {
                 icon: "\uD83E\uDDE0",
-                title: "AI Deep Scan + Auto-Learn",
-                desc: "Claude-powered semantic analysis catches what regex can't. Novel findings automatically become new regex patterns. The scanner gets smarter every scan.",
+                title: "AI Deep Scan",
+                desc: "Claude-powered semantic analysis catches what regex can't. The scanner gets smarter every scan. Novel attacks become new patterns automatically.",
               },
             ].map((card) => (
               <div
