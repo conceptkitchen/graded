@@ -402,7 +402,10 @@ function calculateScore(checks: ScanResult[]): ScoreData {
   return { score, grade, totalFindings, criticalCount, highCount, mediumCount, lowCount };
 }
 
-export function scanPrompt(text: string): FullScanResult {
+export function scanPrompt(
+  text: string,
+  extraPatterns?: Array<{ pattern: string; category: string; severity: Finding["severity"]; description: string }>
+): FullScanResult {
   const truncated = text.slice(0, MAX_TEXT_LENGTH);
 
   const checks: ScanResult[] = ALL_CHECKERS.map(([name, checker]) => {
@@ -413,6 +416,59 @@ export function scanPrompt(text: string): FullScanResult {
       findings,
     };
   });
+
+  // Apply learned patterns
+  if (extraPatterns && extraPatterns.length > 0) {
+    const learnedFindings: Finding[] = [];
+    const textLower = truncated.toLowerCase();
+
+    for (const ep of extraPatterns) {
+      try {
+        const re = new RegExp(ep.pattern, "gim");
+        let match;
+        while ((match = re.exec(textLower)) !== null) {
+          const start = Math.max(0, match.index - 20);
+          const end = Math.min(truncated.length, match.index + match[0].length + 20);
+          const context = truncated.slice(start, end).trim();
+          learnedFindings.push({
+            category: ep.category,
+            severity: ep.severity,
+            description: `[Learned] ${ep.description}`,
+            evidence: context,
+          });
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    if (learnedFindings.length > 0) {
+      // Deduplicate against existing findings
+      const existingEvidence = new Set(
+        checks.flatMap((c) => c.findings.map((f) => f.evidence.toLowerCase()))
+      );
+      const uniqueLearned = learnedFindings.filter(
+        (f) => !existingEvidence.has(f.evidence.toLowerCase())
+      );
+
+      if (uniqueLearned.length > 0) {
+        checks.push({
+          checkName: "Learned patterns",
+          passed: false,
+          findings: uniqueLearned,
+        });
+      }
+    }
+  }
+
+  // Add "Learned patterns" check as passed if no findings
+  if (!checks.find((c) => c.checkName === "Learned patterns") && extraPatterns && extraPatterns.length > 0) {
+    checks.push({
+      checkName: "Learned patterns",
+      passed: true,
+      findings: [],
+    });
+  }
 
   const scoreData = calculateScore(checks);
   return { checks, scoreData };

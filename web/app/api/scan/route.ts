@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { scanPrompt } from "../../lib/scanner";
 import { deepScan } from "../../lib/deep-scanner";
+import { learnFromFindings, getLearnedPatternsForScanner, getLearnedPatternsCount } from "../../lib/pattern-learner";
 
 const MAX_INPUT_LENGTH = 100_000;
 
@@ -58,7 +59,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = scanPrompt(textToScan);
+    // Get learned patterns (from previous deep scans in this server instance)
+    const learnedPatterns = getLearnedPatternsForScanner();
+
+    // Run regex scan with both base + learned patterns
+    const result = scanPrompt(textToScan, learnedPatterns);
     const format = body.format === "detailed" || body.url ? "detailed" : "summary";
     const isDeep = body.deep === true;
 
@@ -115,6 +120,13 @@ export async function POST(request: NextRequest) {
     else if (combinedScore >= 25) combinedGrade = "D";
     else combinedGrade = "F";
 
+    // LEARN: If deep scan found things regex missed, generate new patterns
+    let patternsLearned = 0;
+    if (isDeep && uniqueDeepFindings.length > 0 && !deepError) {
+      const newPatterns = await learnFromFindings(uniqueDeepFindings);
+      patternsLearned = newPatterns.length;
+    }
+
     const responseData: Record<string, unknown> = {
       source,
       grade: isDeep ? combinedGrade : result.scoreData.grade,
@@ -143,6 +155,12 @@ export async function POST(request: NextRequest) {
       }),
       safe: (isDeep ? combinedGrade : result.scoreData.grade) === "A" ||
         (isDeep ? combinedGrade : result.scoreData.grade) === "B",
+      patternLibrary: {
+        base: 120,
+        learned: getLearnedPatternsCount(),
+        total: 120 + getLearnedPatternsCount(),
+        newThisScan: patternsLearned,
+      },
     };
 
     if (isDeep) {

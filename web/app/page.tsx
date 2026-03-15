@@ -90,6 +90,7 @@ export default function Home() {
   const [scanSource, setScanSource] = useState<string | null>(null);
   const [deep, setDeep] = useState(false);
   const [deepData, setDeepData] = useState<{ findings: Array<{ category: string; severity: string; description: string; evidence: string }>; summary: string; confidence: number; error?: string; additionalFindings: number } | null>(null);
+  const [patternLibrary, setPatternLibrary] = useState<{ base: number; learned: number; total: number; newThisScan: number } | null>(null);
 
   const handleScan = useCallback(async () => {
     if (mode === "text" && !text.trim()) return;
@@ -146,6 +147,7 @@ export default function Home() {
         setResult(scanResult);
         setScanSource(data.source || null);
         if (data.deep) setDeepData(data.deep);
+        if (data.patternLibrary) setPatternLibrary(data.patternLibrary);
         setScanning(false);
       } catch {
         alert("Failed to scan");
@@ -397,6 +399,21 @@ export default function Home() {
                     {deepData.findings.length === 0 && !deepData.error && (
                       <p className="text-sm text-green-400">No additional threats detected by AI analysis.</p>
                     )}
+                  </div>
+                )}
+
+                {patternLibrary && patternLibrary.learned > 0 && (
+                  <div className="mt-4 border-t border-green-800/30 pt-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-green-400 font-mono">
+                        {"\uD83E\uDDEC"} Pattern Library: {patternLibrary.base} base + {patternLibrary.learned} learned = {patternLibrary.total} total
+                      </span>
+                      {patternLibrary.newThisScan > 0 && (
+                        <span className="text-xs bg-green-900/50 text-green-300 px-2 py-0.5 rounded-full animate-pulse">
+                          +{patternLibrary.newThisScan} new patterns learned
+                        </span>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
