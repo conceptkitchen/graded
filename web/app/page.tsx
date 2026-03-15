@@ -436,8 +436,8 @@ export default function Home() {
               },
               {
                 icon: "\uD83E\uDDE0",
-                title: "AI Deep Scan",
-                desc: "Claude-powered semantic analysis catches what regex can't. The scanner gets smarter every scan. Novel attacks become new patterns automatically.",
+                title: "AI Deep Scan + Kalibr",
+                desc: "Multi-model scanning routed by Kalibr across Claude, GPT-4o, and Gemini. Learns which model catches the most threats. Gets smarter every scan.",
               },
             ].map((card) => (
               <div
