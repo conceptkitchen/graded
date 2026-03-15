@@ -171,9 +171,6 @@ export default function Home() {
             <div className="text-xl sm:text-2xl font-bold tracking-tight">
               <span className="text-green-500">G</span>raded
             </div>
-            <span className="text-xs text-zinc-500 border border-zinc-700 px-2 py-0.5 rounded">
-              v0.1.0
-            </span>
           </div>
           <div className="text-xs text-zinc-500 hidden sm:block">
             AI Prompt Security Scanner
