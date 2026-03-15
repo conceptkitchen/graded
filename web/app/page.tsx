@@ -88,6 +88,8 @@ export default function Home() {
   const [result, setResult] = useState<FullScanResult | null>(null);
   const [scanning, setScanning] = useState(false);
   const [scanSource, setScanSource] = useState<string | null>(null);
+  const [deep, setDeep] = useState(false);
+  const [deepData, setDeepData] = useState<{ findings: Array<{ category: string; severity: string; description: string; evidence: string }>; summary: string; confidence: number; error?: string; additionalFindings: number } | null>(null);
 
   const handleScan = useCallback(async () => {
     if (mode === "text" && !text.trim()) return;
@@ -95,8 +97,9 @@ export default function Home() {
     setScanning(true);
     setResult(null);
     setScanSource(null);
+    setDeepData(null);
 
-    if (mode === "text") {
+    if (mode === "text" && !deep) {
       setTimeout(() => {
         const scanResult = scanPrompt(text);
         setResult(scanResult);
@@ -105,10 +108,18 @@ export default function Home() {
       }, 300);
     } else {
       try {
+        const payload: Record<string, unknown> = {};
+        if (mode === "url") {
+          payload.url = /^https?:\/\//i.test(url.trim()) ? url.trim() : "https://" + url.trim();
+        } else {
+          payload.text = text;
+        }
+        if (deep) payload.deep = true;
+
         const res = await fetch("/api/scan", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: /^https?:\/\//i.test(url.trim()) ? url.trim() : "https://" + url.trim() }),
+          body: JSON.stringify(payload),
         });
         const data = await res.json();
         if (data.error) {
@@ -133,14 +144,15 @@ export default function Home() {
           },
         };
         setResult(scanResult);
-        setScanSource(data.source);
+        setScanSource(data.source || null);
+        if (data.deep) setDeepData(data.deep);
         setScanning(false);
       } catch {
-        alert("Failed to fetch URL");
+        alert("Failed to scan");
         setScanning(false);
       }
     }
-  }, [text, url, mode]);
+  }, [text, url, mode, deep]);
 
   const loadExample = (example: string) => {
     setMode("text");
@@ -198,6 +210,13 @@ export default function Home() {
                     className={`text-sm px-3 py-1 rounded-lg transition-colors ${mode === "url" ? "bg-green-600/20 text-green-400 border border-green-700" : "text-zinc-500 hover:text-zinc-300 border border-zinc-700"}`}
                   >
                     Scan URL
+                  </button>
+                  <div className="w-px h-4 bg-zinc-700 mx-1" />
+                  <button
+                    onClick={() => setDeep(!deep)}
+                    className={`text-sm px-3 py-1 rounded-lg transition-colors ${deep ? "bg-purple-600/20 text-purple-400 border border-purple-700" : "text-zinc-500 hover:text-zinc-300 border border-zinc-700"}`}
+                  >
+                    {deep ? "\uD83E\uDDE0 Deep Scan ON" : "\uD83E\uDDE0 Deep Scan"}
                   </button>
                 </div>
                 {mode === "text" && (
@@ -262,7 +281,7 @@ export default function Home() {
                   disabled={(mode === "text" ? !text.trim() : !url.trim()) || scanning}
                   className="px-6 py-2.5 bg-green-600 hover:bg-green-500 disabled:bg-zinc-700 disabled:text-zinc-500 text-white text-sm font-medium rounded-lg transition-all cursor-pointer disabled:cursor-not-allowed"
                 >
-                  {scanning ? "Scanning..." : mode === "url" ? "\uD83D\uDD0D Scan URL" : "\uD83D\uDD0D Scan Prompt"}
+                  {scanning ? (deep ? "\uD83E\uDDE0 Deep Scanning..." : "Scanning...") : mode === "url" ? "\uD83D\uDD0D Scan URL" : "\uD83D\uDD0D Scan Prompt"}
                 </button>
               </div>
             </div>
@@ -298,7 +317,7 @@ export default function Home() {
                 {result.scoreData.totalFindings > 0 && (
                   <div className="mt-6 border-t border-zinc-800 pt-4">
                     <div className="text-xs text-zinc-500 uppercase tracking-widest mb-3">
-                      Findings
+                      {deep ? "Pattern Analysis Findings" : "Findings"}
                     </div>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                       {result.checks
@@ -327,6 +346,57 @@ export default function Home() {
                           </div>
                         ))}
                     </div>
+                  </div>
+                )}
+
+                {deepData && (
+                  <div className="mt-6 border-t border-purple-800/50 pt-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-xs text-purple-400 uppercase tracking-widest font-bold">{"\uD83E\uDDE0"} AI Deep Scan</span>
+                      {deepData.confidence !== null && (
+                        <span className="text-xs text-zinc-500">
+                          {Math.round(deepData.confidence * 100)}% confidence
+                        </span>
+                      )}
+                    </div>
+                    {deepData.summary && (
+                      <p className="text-sm text-zinc-300 mb-3 italic">{deepData.summary}</p>
+                    )}
+                    {deepData.error && (
+                      <p className="text-sm text-red-400 mb-3">Deep scan error: {deepData.error}</p>
+                    )}
+                    {deepData.findings.length > 0 && (
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {deepData.findings.map((f, i) => (
+                          <div
+                            key={`deep-${i}`}
+                            className="flex items-start gap-2 text-xs scan-line"
+                            style={{ animationDelay: `${1200 + i * 50}ms` }}
+                          >
+                            <span className="shrink-0 px-1.5 py-0.5 rounded font-bold uppercase bg-purple-900/50 text-purple-400">
+                              AI
+                            </span>
+                            <span
+                              className={`shrink-0 px-1.5 py-0.5 rounded font-bold uppercase ${
+                                f.severity === "critical"
+                                  ? "bg-red-900/50 text-red-400"
+                                  : f.severity === "high"
+                                    ? "bg-orange-900/50 text-orange-400"
+                                    : f.severity === "medium"
+                                      ? "bg-yellow-900/50 text-yellow-400"
+                                      : "bg-zinc-800 text-zinc-400"
+                              }`}
+                            >
+                              {f.severity}
+                            </span>
+                            <span className="text-zinc-300">{f.description}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {deepData.findings.length === 0 && !deepData.error && (
+                      <p className="text-sm text-green-400">No additional threats detected by AI analysis.</p>
+                    )}
                   </div>
                 )}
               </div>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { scanPrompt } from "../../lib/scanner";
+import { deepScan } from "../../lib/deep-scanner";
 
 const MAX_INPUT_LENGTH = 100_000;
 
@@ -58,53 +59,108 @@ export async function POST(request: NextRequest) {
     }
 
     const result = scanPrompt(textToScan);
-
     const format = body.format === "detailed" || body.url ? "detailed" : "summary";
+    const isDeep = body.deep === true;
 
-    if (format === "summary") {
-      return NextResponse.json({
-        source,
-        grade: result.scoreData.grade,
-        score: result.scoreData.score,
-        totalFindings: result.scoreData.totalFindings,
-        severity: {
-          critical: result.scoreData.criticalCount,
-          high: result.scoreData.highCount,
-          medium: result.scoreData.mediumCount,
-          low: result.scoreData.lowCount,
-        },
-        checks: result.checks.map((c) => ({
-          name: c.checkName,
-          passed: c.passed,
-          findingCount: c.findings.length,
-        })),
-        safe: result.scoreData.grade === "A" || result.scoreData.grade === "B",
-      });
+    // Run deep scan if requested
+    let deepFindings: { category: string; severity: "critical" | "high" | "medium" | "low"; description: string; evidence: string }[] = [];
+    let deepSummary: string | null = null;
+    let deepConfidence: number | null = null;
+    let deepError: string | null = null;
+
+    if (isDeep) {
+      try {
+        const deepResult = await deepScan(textToScan);
+        deepFindings = deepResult.findings;
+        deepSummary = deepResult.summary;
+        deepConfidence = deepResult.confidence;
+      } catch (e) {
+        deepError = e instanceof Error ? e.message : "Deep scan failed";
+      }
     }
 
-    return NextResponse.json({
+    // Merge deep findings into the regex results for combined scoring
+    let combinedScore = result.scoreData.score;
+    let combinedGrade = result.scoreData.grade;
+    let combinedTotal = result.scoreData.totalFindings;
+    const severityCounts = {
+      critical: result.scoreData.criticalCount,
+      high: result.scoreData.highCount,
+      medium: result.scoreData.mediumCount,
+      low: result.scoreData.lowCount,
+    };
+
+    // Add deep findings that aren't duplicates of regex findings
+    const uniqueDeepFindings = deepFindings.filter((df) => {
+      return !result.checks.some((check) =>
+        check.findings.some(
+          (f) =>
+            f.category === df.category &&
+            f.evidence === df.evidence
+        )
+      );
+    });
+
+    for (const f of uniqueDeepFindings) {
+      combinedTotal++;
+      severityCounts[f.severity]++;
+      const penalty =
+        f.severity === "critical" ? 25 : f.severity === "high" ? 15 : f.severity === "medium" ? 10 : 5;
+      combinedScore = Math.max(0, combinedScore - penalty);
+    }
+
+    if (combinedScore >= 90) combinedGrade = "A";
+    else if (combinedScore >= 70) combinedGrade = "B";
+    else if (combinedScore >= 50) combinedGrade = "C";
+    else if (combinedScore >= 25) combinedGrade = "D";
+    else combinedGrade = "F";
+
+    const responseData: Record<string, unknown> = {
       source,
-      grade: result.scoreData.grade,
-      score: result.scoreData.score,
-      totalFindings: result.scoreData.totalFindings,
-      severity: {
+      grade: isDeep ? combinedGrade : result.scoreData.grade,
+      score: isDeep ? combinedScore : result.scoreData.score,
+      totalFindings: isDeep ? combinedTotal : result.scoreData.totalFindings,
+      severity: isDeep ? severityCounts : {
         critical: result.scoreData.criticalCount,
         high: result.scoreData.highCount,
         medium: result.scoreData.mediumCount,
         low: result.scoreData.lowCount,
       },
-      checks: result.checks.map((c) => ({
-        name: c.checkName,
-        passed: c.passed,
-        findings: c.findings.map((f) => ({
+      checks: result.checks.map((c) => {
+        if (format === "summary" && !isDeep) {
+          return { name: c.checkName, passed: c.passed, findingCount: c.findings.length };
+        }
+        return {
+          name: c.checkName,
+          passed: c.passed,
+          findings: c.findings.map((f) => ({
+            category: f.category,
+            severity: f.severity,
+            description: f.description,
+            evidence: f.evidence.slice(0, 200),
+          })),
+        };
+      }),
+      safe: (isDeep ? combinedGrade : result.scoreData.grade) === "A" ||
+        (isDeep ? combinedGrade : result.scoreData.grade) === "B",
+    };
+
+    if (isDeep) {
+      responseData.deep = {
+        findings: uniqueDeepFindings.map((f) => ({
           category: f.category,
           severity: f.severity,
           description: f.description,
           evidence: f.evidence.slice(0, 200),
         })),
-      })),
-      safe: result.scoreData.grade === "A" || result.scoreData.grade === "B",
-    });
+        summary: deepSummary,
+        confidence: deepConfidence,
+        error: deepError,
+        additionalFindings: uniqueDeepFindings.length,
+      };
+    }
+
+    return NextResponse.json(responseData);
   } catch {
     return NextResponse.json(
       { error: "Invalid request body" },
