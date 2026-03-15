@@ -83,24 +83,70 @@ function SeverityBar({ scoreData }: { scoreData: FullScanResult["scoreData"] }) 
 
 export default function Home() {
   const [text, setText] = useState("");
+  const [url, setUrl] = useState("");
+  const [mode, setMode] = useState<"text" | "url">("text");
   const [result, setResult] = useState<FullScanResult | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [scanSource, setScanSource] = useState<string | null>(null);
 
-  const handleScan = useCallback(() => {
-    if (!text.trim()) return;
+  const handleScan = useCallback(async () => {
+    if (mode === "text" && !text.trim()) return;
+    if (mode === "url" && !url.trim()) return;
     setScanning(true);
     setResult(null);
+    setScanSource(null);
 
-    setTimeout(() => {
-      const scanResult = scanPrompt(text);
-      setResult(scanResult);
-      setScanning(false);
-    }, 300);
-  }, [text]);
+    if (mode === "text") {
+      setTimeout(() => {
+        const scanResult = scanPrompt(text);
+        setResult(scanResult);
+        setScanSource(null);
+        setScanning(false);
+      }, 300);
+    } else {
+      try {
+        const res = await fetch("/api/scan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: url.trim() }),
+        });
+        const data = await res.json();
+        if (data.error) {
+          alert(data.error);
+          setScanning(false);
+          return;
+        }
+        const scanResult: FullScanResult = {
+          checks: data.checks.map((c: { name: string; passed: boolean; findingCount?: number; findings?: Array<{ category: string; severity: "critical" | "high" | "medium" | "low"; description: string; evidence: string }> }) => ({
+            checkName: c.name,
+            passed: c.passed,
+            findings: c.findings || [],
+          })),
+          scoreData: {
+            score: data.score,
+            grade: data.grade,
+            totalFindings: data.totalFindings,
+            criticalCount: data.severity.critical,
+            highCount: data.severity.high,
+            mediumCount: data.severity.medium,
+            lowCount: data.severity.low,
+          },
+        };
+        setResult(scanResult);
+        setScanSource(data.source);
+        setScanning(false);
+      } catch {
+        alert("Failed to fetch URL");
+        setScanning(false);
+      }
+    }
+  }, [text, url, mode]);
 
   const loadExample = (example: string) => {
+    setMode("text");
     setText(example);
     setResult(null);
+    setScanSource(null);
   };
 
   return (
@@ -140,45 +186,83 @@ export default function Home() {
           <div className="border border-zinc-800 rounded-xl bg-zinc-900/50 overflow-hidden">
             <div className="p-6">
               <div className="flex items-center justify-between mb-3">
-                <label className="text-sm text-zinc-400">
-                  Paste a prompt to scan
-                </label>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2">
                   <button
-                    onClick={() => loadExample(EXAMPLE_CLEAN)}
-                    className="text-xs text-zinc-500 hover:text-green-500 transition-colors px-2 py-1 border border-zinc-700 rounded hover:border-green-800"
+                    onClick={() => { setMode("text"); setResult(null); setScanSource(null); }}
+                    className={`text-sm px-3 py-1 rounded-lg transition-colors ${mode === "text" ? "bg-green-600/20 text-green-400 border border-green-700" : "text-zinc-500 hover:text-zinc-300 border border-zinc-700"}`}
                   >
-                    Try safe example
+                    Paste text
                   </button>
                   <button
-                    onClick={() => loadExample(EXAMPLE_MALICIOUS)}
-                    className="text-xs text-zinc-500 hover:text-red-500 transition-colors px-2 py-1 border border-zinc-700 rounded hover:border-red-800"
+                    onClick={() => { setMode("url"); setResult(null); setScanSource(null); }}
+                    className={`text-sm px-3 py-1 rounded-lg transition-colors ${mode === "url" ? "bg-green-600/20 text-green-400 border border-green-700" : "text-zinc-500 hover:text-zinc-300 border border-zinc-700"}`}
                   >
-                    Try dangerous example
+                    Scan URL
                   </button>
                 </div>
+                {mode === "text" && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => loadExample(EXAMPLE_CLEAN)}
+                      className="text-xs text-zinc-500 hover:text-green-500 transition-colors px-2 py-1 border border-zinc-700 rounded hover:border-green-800"
+                    >
+                      Try safe example
+                    </button>
+                    <button
+                      onClick={() => loadExample(EXAMPLE_MALICIOUS)}
+                      className="text-xs text-zinc-500 hover:text-red-500 transition-colors px-2 py-1 border border-zinc-700 rounded hover:border-red-800"
+                    >
+                      Try dangerous example
+                    </button>
+                  </div>
+                )}
               </div>
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="Paste any AI prompt here..."
-                className="w-full h-36 bg-black/50 border border-zinc-700 rounded-lg p-4 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-green-700 resize-none font-mono"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                    handleScan();
-                  }
-                }}
-              />
+
+              {mode === "text" ? (
+                <textarea
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Paste any AI prompt here..."
+                  className="w-full h-36 bg-black/50 border border-zinc-700 rounded-lg p-4 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-green-700 resize-none font-mono"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                      handleScan();
+                    }
+                  }}
+                />
+              ) : (
+                <div className="space-y-2">
+                  <input
+                    type="url"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    placeholder="https://example.com/llms.txt"
+                    className="w-full bg-black/50 border border-zinc-700 rounded-lg p-4 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-green-700 font-mono"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleScan();
+                      }
+                    }}
+                  />
+                  <p className="text-xs text-zinc-600">
+                    Fetches the URL and scans its content for prompt injection patterns. Try scanning an llms.txt or any agent instruction file.
+                  </p>
+                </div>
+              )}
+
               <div className="flex items-center justify-between mt-3">
                 <span className="text-xs text-zinc-600">
-                  {text.length > 0 ? `${text.length.toLocaleString()} chars` : "Cmd+Enter to scan"}
+                  {mode === "text"
+                    ? text.length > 0 ? `${text.length.toLocaleString()} chars` : "Cmd+Enter to scan"
+                    : scanSource ? `Scanned: ${scanSource}` : "Enter a URL and hit scan"
+                  }
                 </span>
                 <button
                   onClick={handleScan}
-                  disabled={!text.trim() || scanning}
+                  disabled={(mode === "text" ? !text.trim() : !url.trim()) || scanning}
                   className="px-6 py-2.5 bg-green-600 hover:bg-green-500 disabled:bg-zinc-700 disabled:text-zinc-500 text-white text-sm font-medium rounded-lg transition-all cursor-pointer disabled:cursor-not-allowed"
                 >
-                  {scanning ? "Scanning..." : "\uD83D\uDD0D Scan Prompt"}
+                  {scanning ? "Scanning..." : mode === "url" ? "\uD83D\uDD0D Scan URL" : "\uD83D\uDD0D Scan Prompt"}
                 </button>
               </div>
             </div>
