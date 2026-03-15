@@ -1,0 +1,167 @@
+#graded-badge {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2147483647;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  pointer-events: auto;
+}
+
+#graded-badge .graded-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: #111;
+  border: 1px solid #333;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+#graded-badge .graded-pill:hover {
+  border-color: #555;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+}
+
+#graded-badge .graded-grade {
+  font-size: 18px;
+  font-weight: 800;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 2px solid currentColor;
+}
+
+#graded-badge .graded-label {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+#graded-badge .graded-score {
+  font-weight: 600;
+}
+
+/* Grade colors */
+.graded-grade-a { color: #22c55e; }
+.graded-grade-b { color: #84cc16; }
+.graded-grade-c { color: #eab308; }
+.graded-grade-d { color: #f97316; }
+.graded-grade-f { color: #ef4444; }
+
+/* Glow on bad grades */
+.graded-grade-f .graded-grade,
+.graded-grade-d .graded-grade {
+  animation: graded-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes graded-pulse {
+  0%, 100% { box-shadow: 0 0 4px currentColor; }
+  50% { box-shadow: 0 0 16px currentColor; }
+}
+
+/* Expanded panel */
+#graded-panel {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  z-index: 2147483646;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 16px;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+  color: #ccc;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  display: none;
+}
+
+#graded-panel.visible {
+  display: block;
+}
+
+#graded-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #333;
+}
+
+#graded-panel .panel-title {
+  font-weight: 700;
+  color: #fff;
+  font-size: 13px;
+}
+
+#graded-panel .panel-close {
+  cursor: pointer;
+  color: #666;
+  font-size: 16px;
+}
+
+#graded-panel .panel-close:hover {
+  color: #fff;
+}
+
+#graded-panel .check-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+#graded-panel .check-name {
+  color: #999;
+}
+
+#graded-panel .check-pass {
+  color: #22c55e;
+}
+
+#graded-panel .check-fail {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+#graded-panel .finding {
+  padding: 6px 8px;
+  margin: 4px 0;
+  background: #1a1a1a;
+  border-radius: 6px;
+  border-left: 3px solid;
+}
+
+#graded-panel .finding-critical { border-color: #ef4444; }
+#graded-panel .finding-high { border-color: #f97316; }
+#graded-panel .finding-medium { border-color: #eab308; }
+#graded-panel .finding-low { border-color: #6b7280; }
+
+#graded-panel .finding-severity {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+#graded-panel .finding-desc {
+  color: #aaa;
+  font-size: 11px;
+}
+
+/* Idle state */
+#graded-badge .graded-idle {
+  opacity: 0.4;
+}

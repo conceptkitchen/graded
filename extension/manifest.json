@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Graded - AI Prompt Security Scanner",
+  "version": "0.1.0",
+  "description": "Trust grades for AI prompts. Scans for jailbreaks, injection attacks, credential harvesting, and more before you hit send.",
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://copilot.microsoft.com/*",
+        "https://poe.com/*",
+        "https://perplexity.ai/*",
+        "https://www.perplexity.ai/*"
+      ],
+      "js": ["scanner.js", "content.js"],
+      "css": ["badge.css"]
+    }
+  ],
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon48.png"
+  }
+}

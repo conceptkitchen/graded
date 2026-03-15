@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 320px;
+      background: #0a0a0a;
+      color: #fff;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 12px;
+      padding: 16px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+    }
+    .logo { font-size: 18px; font-weight: 800; }
+    .logo span { color: #22c55e; }
+    .version { color: #666; font-size: 10px; }
+    .desc { color: #999; font-size: 11px; margin-bottom: 16px; line-height: 1.5; }
+    .input-area { margin-bottom: 12px; }
+    textarea {
+      width: 100%;
+      height: 80px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 11px;
+      padding: 8px;
+      resize: none;
+      outline: none;
+    }
+    textarea:focus { border-color: #22c55e; }
+    button {
+      width: 100%;
+      padding: 8px;
+      background: #22c55e;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    button:hover { background: #16a34a; }
+    #result { margin-top: 12px; display: none; }
+    .grade-display {
+      text-align: center;
+      padding: 12px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .grade-letter {
+      font-size: 36px;
+      font-weight: 800;
+    }
+    .grade-score { color: #999; font-size: 11px; }
+    .check-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+      color: #999;
+    }
+    .pass { color: #22c55e; }
+    .fail { color: #ef4444; font-weight: 600; }
+    .footer {
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px solid #222;
+      text-align: center;
+      color: #444;
+      font-size: 10px;
+    }
+    .grade-a { color: #22c55e; }
+    .grade-b { color: #84cc16; }
+    .grade-c { color: #eab308; }
+    .grade-d { color: #f97316; }
+    .grade-f { color: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo"><span>G</span>raded</div>
+    <div class="version">v0.1.0</div>
+  </div>
+  <div class="desc">Paste any prompt to scan for security threats. 8 checks, A-F trust grade.</div>
+  <div class="input-area">
+    <textarea id="input" placeholder="Paste a prompt to scan..."></textarea>
+    <button id="scan-btn">Scan Prompt</button>
+  </div>
+  <div id="result">
+    <div class="grade-display">
+      <div class="grade-letter" id="grade-letter"></div>
+      <div class="grade-score" id="grade-score"></div>
+    </div>
+    <div id="checks"></div>
+  </div>
+  <div class="footer">Built by The Concept Kitchen</div>
+
+  <script src="scanner.js"></script>
+  <script>
+    document.getElementById("scan-btn").addEventListener("click", () => {
+      const text = document.getElementById("input").value;
+      if (!text.trim()) return;
+
+      const r = gradedScan(text);
+
+      document.getElementById("result").style.display = "block";
+      const gl = document.getElementById("grade-letter");
+      gl.textContent = r.grade;
+      gl.className = "grade-letter grade-" + r.grade.toLowerCase();
+      document.getElementById("grade-score").textContent = r.score + "/100";
+
+      document.getElementById("checks").innerHTML = r.checks.map(c =>
+        `<div class="check-row"><span>${c.name}</span><span class="${c.passed ? 'pass' : 'fail'}">${c.passed ? 'PASS' : 'FAIL'}</span></div>`
+      ).join("");
+    });
+  </script>
+</body>
+</html>
