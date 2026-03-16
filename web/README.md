@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Graded — AI Prompt Security Scanner
 
-## Getting Started
+Trust grades for the AI age. Scan any prompt and get an A-F trust score. Instantly.
 
-First, run the development server:
+## What It Does
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Graded scans AI prompts for security threats using a two-layer detection system:
+
+- **Layer 1 — Regex Engine:** 222+ attack patterns across 9 categories (120 hand-built + 102 from Augustus open source). Instant, deterministic.
+- **Layer 2 — AI Deep Scan:** Multi-model analysis via Kalibr (Claude, GPT-4o, Gemini). Catches semantic attacks that regex misses.
+
+The engine learns: when the AI deep scan finds something new, it extracts a regex pattern, validates it against clean text (anti-poisoning), and persists it to a Neon Postgres database. Every scan makes the next scan smarter.
+
+## Architecture
+
+```
+Browser → Regex Scan (222+ patterns) → A-F Grade
+              ↓ (if deep scan enabled)
+         Kalibr API → Claude / GPT-4o / Gemini
+              ↓
+         Pattern Learner → Neon DB (persistent)
+              ↓
+         Augustus Sync → GitHub API (open source patterns)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend:** Next.js 16, React 19, Tailwind CSS 4
+- **Backend:** Next.js API Routes (serverless on Vercel)
+- **Database:** Neon Postgres (serverless) — persistent learned patterns
+- **AI:** Anthropic Claude, OpenAI GPT-4o, Google Gemini via Kalibr
+- **Open Source Patterns:** [praetorian-inc/augustus](https://github.com/praetorian-inc/augustus) (Apache 2.0)
+- **Security Scanning:** Aikido SAST (SDLC)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment Surfaces
 
-## Learn More
+1. **Web App** — getgraded.vercel.app
+2. **CLI** — `python3 graded.py scan --text "..."`
+3. **REST API** — `POST /api/scan`
+4. **npm Package** — `import { scanPrompt } from '@graded/scanner'`
+5. **MCP Server** — AI agents self-audit before executing
+6. **Chrome Extension** — Real-time grades while you type
+7. **Marketplace Scanner** — Grade prompts on FlowGPT, PromptBase, GitHub
 
-To learn more about Next.js, take a look at the following resources:
+## API Endpoints
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/scan` | POST | Scan a prompt (text or URL). Returns grade, score, findings. |
+| `/api/patterns` | GET | Get current pattern library status + learned patterns. |
+| `/api/patterns/sync` | GET | Check Augustus upstream for new patterns. Returns sync status. |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment Variables
 
-## Deploy on Vercel
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | Neon Postgres connection string |
+| `ANTHROPIC_API_KEY` | For deep scan | Claude API key for AI deep scan + pattern learning |
+| `KALIBR_API_KEY` | For deep scan | Kalibr multi-model routing |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+cd web
+npm install
+cp .env.local.example .env.local  # Add your keys
+npm run dev
+```
+
+## Attack Categories
+
+DAN Jailbreak, Token Manipulation, ChatML Injection, Payload Splitting, Markdown Exfiltration, Emotional Manipulation, RAG Poisoning, Steganographic, Obfuscation — and more.
+
+## License
+
+Apache 2.0
+
+## Built By
+
+RJ Moscardon — [The Concept Kitchen](https://theconceptkitchen.xyz)

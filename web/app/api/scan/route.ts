@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get learned patterns (from previous deep scans in this server instance)
-    const learnedPatterns = getLearnedPatternsForScanner();
+    const learnedPatterns = await getLearnedPatternsForScanner();
 
     // Run regex scan with both base + learned patterns
     const result = scanPrompt(textToScan, learnedPatterns);
@@ -131,6 +131,7 @@ export async function POST(request: NextRequest) {
       patternsLearned = newPatterns.length;
     }
 
+    const learnedCount = await getLearnedPatternsCount();
     const responseData: Record<string, unknown> = {
       source,
       grade: isDeep ? combinedGrade : result.scoreData.grade,
@@ -160,9 +161,9 @@ export async function POST(request: NextRequest) {
       safe: (isDeep ? combinedGrade : result.scoreData.grade) === "A" ||
         (isDeep ? combinedGrade : result.scoreData.grade) === "B",
       patternLibrary: {
-        base: 185,
-        learned: getLearnedPatternsCount(),
-        total: 185 + getLearnedPatternsCount(),
+        base: 222,
+        learned: learnedCount,
+        total: 222 + learnedCount,
         newThisScan: patternsLearned,
       },
     };

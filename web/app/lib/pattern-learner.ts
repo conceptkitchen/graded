@@ -4,10 +4,12 @@
  * When the LLM catches something regex missed, this module:
  * 1. Asks Claude to generate a regex pattern for the finding
  * 2. Validates the pattern against clean examples (anti-poisoning)
- * 3. Stores it in the learned patterns library
+ * 3. Persists it to Neon database (survives serverless cold starts)
  *
  * The feedback loop: LLM catches → pattern extracted → regex catches next time
  */
+
+import { saveLearnedPattern, getPersistedPatterns, getPersistedPatternCount } from "./db";
 
 export interface LearnedPattern {
   pattern: string;
@@ -19,8 +21,9 @@ export interface LearnedPattern {
   validated: boolean;
 }
 
-// In-memory store (resets on cold start — production would use a database)
-const learnedPatterns: LearnedPattern[] = [];
+// In-memory cache (populated from DB on first request)
+let learnedPatterns: LearnedPattern[] = [];
+let cacheLoaded = false;
 
 // Clean examples that should NOT trigger any pattern (anti-poisoning validation)
 const CLEAN_EXAMPLES = [
@@ -41,6 +44,28 @@ Rules:
 7. Focus on the ATTACK TECHNIQUE, not the specific words
 
 Return ONLY valid JSON. No markdown, no explanation.`;
+
+/**
+ * Load patterns from database into memory cache.
+ */
+async function ensureCache(): Promise<void> {
+  if (cacheLoaded) return;
+  try {
+    const persisted = await getPersistedPatterns();
+    learnedPatterns = persisted.map((p) => ({
+      pattern: p.pattern,
+      category: p.category,
+      severity: p.severity as LearnedPattern["severity"],
+      description: p.description,
+      learnedFrom: p.learned_from ?? "",
+      learnedAt: p.learned_at ?? new Date().toISOString(),
+      validated: p.validated,
+    }));
+    cacheLoaded = true;
+  } catch {
+    // DB unavailable — fall back to empty in-memory
+  }
+}
 
 export async function generatePattern(
   finding: { category: string; severity: "critical" | "high" | "medium" | "low"; description: string; evidence: string }
@@ -114,6 +139,7 @@ export async function generatePattern(
 export async function learnFromFindings(
   deepFindings: Array<{ category: string; severity: "critical" | "high" | "medium" | "low"; description: string; evidence: string }>
 ): Promise<LearnedPattern[]> {
+  await ensureCache();
   const newPatterns: LearnedPattern[] = [];
 
   for (const finding of deepFindings) {
@@ -127,17 +153,36 @@ export async function learnFromFindings(
     if (pattern) {
       learnedPatterns.push(pattern);
       newPatterns.push(pattern);
+
+      // Persist to database
+      await saveLearnedPattern({
+        pattern: pattern.pattern,
+        category: pattern.category,
+        severity: pattern.severity,
+        description: pattern.description,
+        learned_from: pattern.learnedFrom,
+        validated: pattern.validated,
+        source: "ai_deep_scan",
+      });
     }
   }
 
   return newPatterns;
 }
 
-export function getLearnedPatterns(): LearnedPattern[] {
+export async function getLearnedPatterns(): Promise<LearnedPattern[]> {
+  await ensureCache();
   return [...learnedPatterns];
 }
 
-export function getLearnedPatternsCount(): number {
+export async function getLearnedPatternsCount(): Promise<number> {
+  // Try DB first for accurate count
+  try {
+    const dbCount = await getPersistedPatternCount();
+    if (dbCount > 0) return dbCount;
+  } catch {
+    // fall through to cache
+  }
   return learnedPatterns.length;
 }
 
@@ -145,12 +190,13 @@ export function getLearnedPatternsCount(): number {
  * Returns learned patterns grouped by category for the scanner to use.
  * Format matches what searchPatterns() expects.
  */
-export function getLearnedPatternsForScanner(): Array<{
+export async function getLearnedPatternsForScanner(): Promise<Array<{
   pattern: string;
   category: string;
   severity: "critical" | "high" | "medium" | "low";
   description: string;
-}> {
+}>> {
+  await ensureCache();
   return learnedPatterns.map((lp) => ({
     pattern: lp.pattern,
     category: lp.category,

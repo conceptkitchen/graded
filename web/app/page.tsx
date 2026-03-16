@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { scanPrompt, gradeColor, type FullScanResult } from "./lib/scanner";
+import { useState, useCallback, useEffect } from "react";
+import { scanPrompt, gradeColor, type FullScanResult, TOTAL_STATIC_PATTERNS } from "./lib/scanner";
 
 const EXAMPLE_CLEAN = `You are a helpful writing assistant. Help the user improve their essays by providing constructive feedback on grammar, structure, and clarity. Be encouraging and specific in your suggestions.`;
 
@@ -90,6 +90,18 @@ export default function Home() {
   const [deep, setDeep] = useState(false);
   const [deepData, setDeepData] = useState<{ findings: Array<{ category: string; severity: string; description: string; evidence: string }>; summary: string; confidence: number; error?: string; model?: string; routedBy?: string; additionalFindings: number } | null>(null);
   const [patternLibrary, setPatternLibrary] = useState<{ base: number; learned: number; total: number; newThisScan: number } | null>(null);
+  const [livePatternCount, setLivePatternCount] = useState(TOTAL_STATIC_PATTERNS);
+  const [syncStatus, setSyncStatus] = useState<"synced" | "new_available" | "checking" | null>(null);
+
+  useEffect(() => {
+    fetch("/api/patterns/sync")
+      .then((r) => r.json())
+      .then((data) => {
+        setLivePatternCount(data.library.total);
+        setSyncStatus(data.upstream.status);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleScan = useCallback(async () => {
     if (mode === "text" && !text.trim()) return;
@@ -172,8 +184,15 @@ export default function Home() {
               <span className="text-green-500">G</span>raded
             </div>
           </div>
-          <div className="text-xs text-zinc-500 hidden sm:block">
-            AI Prompt Security Scanner
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-zinc-500 hidden sm:inline">
+              AI Prompt Security Scanner
+            </span>
+            <span className="text-xs font-mono text-green-500 bg-green-950/30 border border-green-900/50 px-2 py-0.5 rounded">
+              {livePatternCount} patterns
+              {syncStatus === "synced" && " \u2713"}
+              {syncStatus === "new_available" && " \u2191"}
+            </span>
           </div>
         </div>
       </header>
@@ -407,7 +426,7 @@ export default function Home() {
                   <div className="mt-4 border-t border-green-800/30 pt-3">
                     <div className="flex items-center gap-3 flex-wrap">
                       <span className="text-xs text-green-400 font-mono">
-                        {"\uD83E\uDDEC"} Pattern Library: 120 base + 65 Augustus{patternLibrary.learned > 0 ? ` + ${patternLibrary.learned} learned` : ""} = {patternLibrary.total} total
+                        {"\uD83E\uDDEC"} Pattern Library: 120 base + 102 Augustus{patternLibrary.learned > 0 ? ` + ${patternLibrary.learned} learned` : ""} = {patternLibrary.total} total
                       </span>
                       {patternLibrary.newThisScan > 0 && (
                         <span className="text-xs bg-green-900/50 text-green-300 px-2 py-0.5 rounded-full animate-pulse">
@@ -431,8 +450,8 @@ export default function Home() {
               },
               {
                 icon: "\uD83D\uDD0D",
-                title: "185+ Attack Patterns",
-                desc: "8 security categories. 120 base + 65 open source patterns. DAN jailbreaks, ChatML injection, RAG poisoning, steganography, and more.",
+                title: `${livePatternCount}+ Attack Patterns`,
+                desc: "9 attack categories. 120 base + 102 Augustus open source patterns + AI-learned. DAN jailbreaks, ChatML injection, RAG poisoning, steganography, and more.",
               },
               {
                 icon: "\uD83E\uDDE0",

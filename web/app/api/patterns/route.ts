@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { getLearnedPatterns } from "../../lib/pattern-learner";
 
 export async function GET() {
-  const patterns = getLearnedPatterns();
+  const patterns = await getLearnedPatterns();
   return NextResponse.json({
-    base: 185,
+    base: 222,
     learned: patterns.length,
-    total: 185 + patterns.length,
+    total: 222 + patterns.length,
     patterns: patterns.map((p) => ({
       pattern: p.pattern,
       category: p.category,
