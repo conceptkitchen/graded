@@ -72,12 +72,16 @@
 
 "Here's the gap. mcp-scan, Invariant, PromptSec, they scan the pipes. Configs, APIs, infrastructure. Nobody scans the prompts themselves. We own that lane."
 
+*(beat, then deliver the category line)*
+
+"Security middleware for AI. The layer between every agent and the content it consumes."
+
 *(gesture to the 3-way engine)*
 
 "The engine gets smarter three ways. 120 hand-built patterns. Auto-sync from three open source repos. And the AI deep scan extracts new patterns from every finding and persists them permanently. Data network effect."
 
-> **Sable:** "We own that lane" is your alpha line. Say it like a fact, not a hope.
-> **Cass:** Don't read every row of the table. Point at the green column. "See the checkmarks? That's us. Nobody else."
+> **Sable:** "We own that lane" lands first. Then the middleware line names the category. Two punches. Don't rush between them. The pause is where the investor's brain recategorizes you from "tool" to "infrastructure."
+> **Cass:** Don't read every row of the table. Point at the green column. "See the checkmarks? That's us. Nobody else." The middleware line tells them WHAT category. The table proves WHY nobody else is in it.
 
 ---
 

@@ -168,6 +168,7 @@ const slides = [
                 ["URL / llms.txt Scanning", "—", "—", "—", "✓"],
                 ["Shared Prompts", "—", "—", "—", "✓"],
                 ["Trust Grading (A-F)", "—", "—", "—", "✓"],
+                ["Human-in-the-Loop", "—", "—", "—", "✓"],
                 ["AI Deep Scan", "—", "—", "~", "✓"],
                 ["Auto-Learning", "—", "—", "—", "✓"],
                 ["Open Source Patterns", "—", "—", "—", "✓"],
@@ -186,7 +187,7 @@ const slides = [
           </table>
         </div>
         <p className="mt-6 text-sm text-zinc-500 text-center">
-          Nobody else scans the prompts. <span className="text-white font-semibold">Nobody owns this lane.</span>
+          Security middleware for AI. <span className="text-white font-semibold">The layer between every agent and the content it consumes.</span>
         </p>
         <div className="mt-4 px-4 py-4 border border-green-800/50 rounded-lg bg-green-950/10 max-w-2xl">
           <div className="text-xs text-green-400 uppercase tracking-widest mb-3 text-center font-bold">🧬 The engine gets smarter 3 ways</div>
