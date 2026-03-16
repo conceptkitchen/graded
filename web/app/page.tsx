@@ -92,15 +92,33 @@ export default function Home() {
   const [patternLibrary, setPatternLibrary] = useState<{ base: number; learned: number; total: number; newThisScan: number } | null>(null);
   const [livePatternCount, setLivePatternCount] = useState(TOTAL_STATIC_PATTERNS);
   const [syncStatus, setSyncStatus] = useState<"synced" | "new_available" | "checking" | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<{ newPatterns: number; total: number } | null>(null);
 
   useEffect(() => {
     fetch("/api/patterns/sync")
       .then((r) => r.json())
       .then((data) => {
         setLivePatternCount(data.library.total);
-        setSyncStatus(data.upstream.status);
+        setSyncStatus(data.upstream?.status ?? "synced");
       })
       .catch(() => {});
+  }, []);
+
+  const handleSync = useCallback(async () => {
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await fetch("/api/patterns/sync", { method: "POST" });
+      const data = await res.json();
+      setLivePatternCount(data.library.total);
+      setSyncResult({ newPatterns: data.summary.newPatternsAdded, total: data.library.total });
+      setSyncStatus("synced");
+    } catch {
+      // silent fail
+    } finally {
+      setSyncing(false);
+    }
   }, []);
 
   const handleScan = useCallback(async () => {
@@ -188,11 +206,21 @@ export default function Home() {
             <span className="text-xs text-zinc-500 hidden sm:inline">
               AI Prompt Security Scanner
             </span>
-            <span className="text-xs font-mono text-green-500 bg-green-950/30 border border-green-900/50 px-2 py-0.5 rounded">
-              {livePatternCount} patterns
-              {syncStatus === "synced" && " \u2713"}
-              {syncStatus === "new_available" && " \u2191"}
-            </span>
+            <button
+              onClick={handleSync}
+              disabled={syncing}
+              className="text-xs font-mono text-green-500 bg-green-950/30 border border-green-900/50 px-2 py-0.5 rounded hover:bg-green-950/50 hover:border-green-700 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-wait"
+              title="Sync patterns from open source repos"
+            >
+              {syncing ? "syncing..." : `${livePatternCount} patterns`}
+              {!syncing && syncStatus === "synced" && " \u2713"}
+              {!syncing && syncStatus === "new_available" && " \u2191"}
+            </button>
+            {syncResult && (
+              <span className="text-[10px] text-green-400 animate-pulse">
+                {syncResult.newPatterns > 0 ? `+${syncResult.newPatterns} new` : "up to date"}
+              </span>
+            )}
           </div>
         </div>
       </header>
