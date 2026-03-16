@@ -14,6 +14,14 @@ const slides = [
         <div className="text-xl sm:text-3xl text-zinc-300 font-light tracking-wide mb-8">
           Trust scores for the AI age.
         </div>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="px-3 py-1 rounded-full border border-yellow-500/40 bg-yellow-500/10 text-yellow-400 text-xs font-bold tracking-wide">
+            🏆 Kalibr Resilience Challenge Winner
+          </div>
+          <div className="px-3 py-1 rounded-full border border-blue-500/40 bg-blue-500/10 text-blue-400 text-xs font-bold tracking-wide">
+            🏆 Protocol Labs AI Safety Prize
+          </div>
+        </div>
         <div className="text-sm text-zinc-500 tracking-widest uppercase">
           PL_Genesis: Frontiers of Collaboration | Protocol Labs
         </div>
@@ -102,7 +110,7 @@ const slides = [
     content: (
       <div className="flex flex-col items-center justify-center h-full px-6">
         <h2 className="text-2xl sm:text-4xl font-bold text-white mb-10 text-center">
-          Two layers. <span className="text-green-500">Unhackable.</span>
+          Two layers. <span className="text-green-500">Two-layer trust.</span>
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl w-full">
           <div className="border border-green-800 rounded-xl p-6 bg-green-950/20">
