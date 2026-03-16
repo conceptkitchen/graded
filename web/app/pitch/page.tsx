@@ -9,10 +9,10 @@ const slides = [
     content: (
       <div className="flex flex-col items-center justify-center h-full text-center px-6">
         <div className="text-lg sm:text-xl text-zinc-400 uppercase tracking-widest mb-6">
-          OWASP 2025
+          OWASP TOP 10 FOR AI
         </div>
         <div className="text-4xl sm:text-6xl font-black text-red-500 leading-tight mb-6 max-w-2xl">
-          Prompt injection is the #1 AI vulnerability.
+          Prompt injection is #1. Still. Two years running.
         </div>
         <div className="text-xl sm:text-2xl text-zinc-300 max-w-xl">
           35% of real-world AI incidents. $100K+ losses.
