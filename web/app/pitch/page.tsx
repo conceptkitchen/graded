@@ -187,6 +187,11 @@ const slides = [
         <p className="mt-6 text-sm text-zinc-500 text-center">
           Nobody else scans the prompts. <span className="text-white font-semibold">Nobody owns this lane.</span>
         </p>
+        <div className="mt-4 px-4 py-3 border border-green-800/50 rounded-lg bg-green-950/10 max-w-2xl">
+          <p className="text-sm text-center text-green-400">
+            🧬 Every scan teaches the engine. <span className="text-white">185 patterns today. More tomorrow.</span> New attacks detected by AI deep scan become permanent patterns automatically.
+          </p>
+        </div>
       </div>
     ),
   },
