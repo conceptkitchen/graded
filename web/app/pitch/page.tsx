@@ -271,18 +271,17 @@ const slides = [
           RJ Moscardon
         </div>
         <div className="text-lg sm:text-xl text-zinc-400 mb-8">
-          Solo founder. <span className="text-green-500">The Concept Kitchen.</span>
+          Builder. Solo founder. Security + AI.
         </div>
         <div className="max-w-lg space-y-3 text-base text-zinc-400 mb-10">
           <p>Built Graded in 48 hours. Deployed to 7 surfaces. Won 2 prizes.</p>
-          <p>Also building <span className="text-white font-semibold">Pet Zen</span> &mdash; AI-powered pet care updates. Active pilot in SF.</p>
+          <p>Open source engine. 185+ attack patterns. Multi-model deep scan via <span className="text-purple-400">Kalibr</span>.</p>
         </div>
         <div className="border border-green-800 rounded-xl p-6 bg-green-950/20 max-w-md w-full">
-          <div className="text-green-400 text-xs uppercase tracking-widest mb-3 font-bold">Looking for</div>
-          <div className="space-y-2 text-base text-white">
-            <p>Design partners &amp; early adopters</p>
-            <p>Marketplace integrations</p>
-            <p>Pre-seed conversations</p>
+          <div className="text-green-400 text-xs uppercase tracking-widest mb-3 font-bold">Raising</div>
+          <div className="text-2xl font-bold text-white mb-3">$500K pre-seed</div>
+          <div className="space-y-2 text-sm text-zinc-400">
+            <p>Post-money SAFE &bull; Design partners &amp; marketplace integrations</p>
           </div>
         </div>
       </div>
