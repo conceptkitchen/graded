@@ -195,8 +195,8 @@ const slides = [
               <div className="text-zinc-500">120 hand-built + 62 open source. 9 attack categories.</div>
             </div>
             <div>
-              <div className="text-white font-bold mb-1">Open Source</div>
-              <div className="text-zinc-500">Community repos like Augustus. New research, absorbed automatically.</div>
+              <div className="text-white font-bold mb-1">Open Source Sync</div>
+              <div className="text-zinc-500">3 repos: Augustus, CyberAlb, CL4R1T4S. New research, absorbed automatically.</div>
             </div>
             <div>
               <div className="text-white font-bold mb-1">AI Deep Scan</div>

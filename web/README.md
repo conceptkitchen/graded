@@ -29,8 +29,8 @@ Browser → Regex Scan (182+ patterns) → A-F Grade
 - **Backend:** Next.js API Routes (serverless on Vercel)
 - **Database:** Neon Postgres (serverless) — persistent learned patterns
 - **AI:** Anthropic Claude, OpenAI GPT-4o, Google Gemini via Kalibr
-- **Open Source Patterns:** [praetorian-inc/augustus](https://github.com/praetorian-inc/augustus) (Apache 2.0)
-- **Security Scanning:** Aikido SAST (SDLC)
+- **Open Source Patterns:** [praetorian-inc/augustus](https://github.com/praetorian-inc/augustus), [CyberAlbSecOP/Awesome_GPT_Super_Prompting](https://github.com/CyberAlbSecOP/Awesome_GPT_Super_Prompting), [elder-plinius/CL4R1T4S](https://github.com/elder-plinius/CL4R1T4S)
+- **Security Scanning:** Aikido SAST + CodeRabbit AI code review (SDLC)
 
 ## Deployment Surfaces
 
@@ -48,7 +48,8 @@ Browser → Regex Scan (182+ patterns) → A-F Grade
 |----------|--------|-------------|
 | `/api/scan` | POST | Scan a prompt (text or URL). Returns grade, score, findings. |
 | `/api/patterns` | GET | Get current pattern library status + learned patterns. |
-| `/api/patterns/sync` | GET | Check Augustus upstream for new patterns. Returns sync status. |
+| `/api/patterns/sync` | GET | Check pattern library status + sync sources. |
+| `/api/patterns/sync` | POST | Pull new patterns from Augustus, CyberAlb, CL4R1T4S. Returns sync results. |
 
 ## Environment Variables
 
