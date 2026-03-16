@@ -56,7 +56,7 @@
 ### SLIDE 5: PRODUCT (15 sec)
 *Energy: technical confidence, builder energy*
 
-"Two layers. Layer one: regex engine, 182 attack patterns, instant, deterministic. Layer two: Kalibr AI, multi-model deep scan, Claude, GPT-4o, Gemini. And the score can only go down, never up. You earn trust, you don't get the benefit of the doubt."
+"Two layers. Layer one: regex engine, 189 attack patterns, instant, deterministic. Layer two: Kalibr AI, multi-model deep scan, Claude, GPT-4o, Gemini. And the score can only go down, never up. You earn trust, you don't get the benefit of the doubt."
 
 *(point to terminal demo on slide)*
 
@@ -186,7 +186,7 @@ If pushed: "The SSL certificate market is $4.2B. 'Graded Verified' is the same m
 ---
 
 ### 7. "What's stopping someone from copying this?"
-**"The pattern library. 182+ patterns today, growing with every scan. The AI deep scan learns new techniques, validates them, and persists them to a Neon Postgres database permanently. That's a data network effect. Plus we auto-sync from three open source repos: Augustus, CyberAlb, and CL4R1T4S. A copycat starts at zero. We're already compounding. First mover with a growing dataset is the hardest thing to replicate in security."**
+**"The pattern library. 189+ patterns today, growing with every scan. The AI deep scan learns new techniques, validates them, and persists them to a Neon Postgres database permanently. That's a data network effect. Plus we auto-sync from three open source repos: Augustus, CyberAlb, and CL4R1T4S. A copycat starts at zero. We're already compounding. First mover with a growing dataset is the hardest thing to replicate in security."**
 
 ---
 
