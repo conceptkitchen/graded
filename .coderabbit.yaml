@@ -1,0 +1,59 @@
+language: "en-US"
+early_access: false
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
+  path_instructions:
+    - path: "web/app/lib/**"
+      instructions: |
+        This is the core scanner engine. Check for:
+        - Regex pattern correctness (valid JS regex, no catastrophic backtracking)
+        - Anti-poisoning validation on learned patterns
+        - Proper error handling on external API calls (Anthropic, Kalibr)
+        - No hardcoded credentials or API keys
+        - Database operations have proper error fallbacks
+    - path: "web/app/api/**"
+      instructions: |
+        API route handlers. Check for:
+        - Input validation and sanitization
+        - Proper error responses with status codes
+        - No sensitive data in responses
+        - Rate limiting considerations for external API calls
+        - Async/await correctness (no unhandled promises)
+    - path: "web/app/pitch/**"
+      instructions: |
+        Investor pitch deck. Check for:
+        - Accurate numbers matching actual codebase (pattern counts, etc)
+        - No fabricated or unverified statistics
+        - Consistent messaging across slides
+    - path: "mcp/**"
+      instructions: |
+        MCP server for AI agent integration. Check for:
+        - Proper MCP protocol implementation
+        - Input validation on scan requests
+        - No command injection vectors
+    - path: "graded.py"
+      instructions: |
+        Python CLI scanner. Check for:
+        - Command injection via user input
+        - File path traversal
+        - Proper output encoding
+    - path: "extension/**"
+      instructions: |
+        Chrome extension. Check for:
+        - Content Security Policy compliance
+        - No eval() or unsafe-inline
+        - Proper cross-origin handling
+  path_filters:
+    - "!**/*.lock"
+    - "!**/node_modules/**"
+    - "!**/.next/**"
+    - "!**/dist/**"
+chat:
+  auto_reply: true
