@@ -44,7 +44,7 @@ If pushed: "The SSL certificate market is $4.2B. 'Graded Verified' is the same m
 ---
 
 ### 7. "What's stopping someone from copying this?"
-**"The pattern library. 222 patterns today, growing with every scan. The AI deep scan learns new techniques, validates them, and persists them to a database permanently. That's a data network effect. Plus we auto-sync with open source repos like Augustus. A copycat starts at zero. We're already compounding. First mover with a growing dataset is the hardest thing to replicate in security."**
+**"The pattern library. 182 patterns today, growing with every scan. The AI deep scan learns new techniques, validates them, and persists them to a database permanently. That's a data network effect. Plus we auto-sync with open source repos like Augustus. A copycat starts at zero. We're already compounding. First mover with a growing dataset is the hardest thing to replicate in security."**
 
 ---
 

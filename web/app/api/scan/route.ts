@@ -161,9 +161,9 @@ export async function POST(request: NextRequest) {
       safe: (isDeep ? combinedGrade : result.scoreData.grade) === "A" ||
         (isDeep ? combinedGrade : result.scoreData.grade) === "B",
       patternLibrary: {
-        base: 222,
+        base: 182,
         learned: learnedCount,
-        total: 222 + learnedCount,
+        total: 182 + learnedCount,
         newThisScan: patternsLearned,
       },
     };

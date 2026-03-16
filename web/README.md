@@ -6,7 +6,7 @@ Trust grades for the AI age. Scan any prompt and get an A-F trust score. Instant
 
 Graded scans AI prompts for security threats using a two-layer detection system:
 
-- **Layer 1 — Regex Engine:** 222+ attack patterns across 9 categories (120 hand-built + 102 from Augustus open source). Instant, deterministic.
+- **Layer 1 — Regex Engine:** 182+ attack patterns across 9 categories (120 hand-built + 62 from Augustus open source). Instant, deterministic.
 - **Layer 2 — AI Deep Scan:** Multi-model analysis via Kalibr (Claude, GPT-4o, Gemini). Catches semantic attacks that regex misses.
 
 The engine learns: when the AI deep scan finds something new, it extracts a regex pattern, validates it against clean text (anti-poisoning), and persists it to a Neon Postgres database. Every scan makes the next scan smarter.
@@ -14,13 +14,13 @@ The engine learns: when the AI deep scan finds something new, it extracts a rege
 ## Architecture
 
 ```
-Browser → Regex Scan (222+ patterns) → A-F Grade
+Browser → Regex Scan (182+ patterns) → A-F Grade
               ↓ (if deep scan enabled)
          Kalibr API → Claude / GPT-4o / Gemini
               ↓
          Pattern Learner → Neon DB (persistent)
               ↓
-         Augustus Sync → GitHub API (open source patterns)
+         Multi-Source Sync → Augustus, CyberAlb, CL4R1T4S (open source)
 ```
 
 ## Stack

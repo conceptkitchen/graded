@@ -4,9 +4,9 @@ import { getLearnedPatterns } from "../../lib/pattern-learner";
 export async function GET() {
   const patterns = await getLearnedPatterns();
   return NextResponse.json({
-    base: 222,
+    base: 182,
     learned: patterns.length,
-    total: 222 + patterns.length,
+    total: 182 + patterns.length,
     patterns: patterns.map((p) => ({
       pattern: p.pattern,
       category: p.category,
