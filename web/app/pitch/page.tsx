@@ -392,8 +392,8 @@ const slides = [
         <div className="space-y-2 text-sm text-zinc-500">
           <div><span className="text-zinc-300 font-semibold">RJ Moscardon</span> &bull; The Concept Kitchen</div>
           <div className="text-xs text-zinc-500 mt-1">Powered by <span className="text-purple-400">Kalibr</span> &bull; PL_Genesis &bull; Protocol Labs</div>
-          <div className="font-mono text-green-400 mt-2">getgraded.vercel.app</div>
-          <div className="font-mono text-zinc-500">github.com/conceptkitchen/graded</div>
+          <a href="https://getgraded.vercel.app" target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="block font-mono text-green-400 mt-2 hover:text-green-300 transition-colors">getgraded.vercel.app</a>
+          <a href="https://github.com/conceptkitchen/graded" target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="block font-mono text-zinc-500 hover:text-zinc-300 transition-colors">github.com/conceptkitchen/graded</a>
         </div>
       </div>
     ),
