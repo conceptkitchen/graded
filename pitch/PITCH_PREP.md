@@ -171,6 +171,8 @@ If pushed: "OpenAI's incentive is to make their models permissive and useful. Gr
 
 If pushed: "In fact, we use Aikido and CodeRabbit in our own SDLC. They scan our code. We scan the prompts. Complementary, not competitive."
 
+If they want the table explained: "Left three columns on the comp table, those tools check the infrastructure. The plumbing. Is the MCP server configured safely, is the API endpoint hardened, is the agent behaving correctly. Important work. But nobody checks the content that flows through that infrastructure. The prompt text. The web page. The shared skill. That's the green column. That's us."
+
 ---
 
 ### 5. "How big is this market?"
