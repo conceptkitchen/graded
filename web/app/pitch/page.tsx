@@ -162,21 +162,21 @@ const slides = [
             </thead>
             <tbody>
               {[
-                ["MCP Servers", "✓", "✓", "—", "—"],
+                ["MCP Servers", "✓", "✓", "✓", "—"],
                 ["Tool Configs", "✓", "✓", "—", "—"],
-                ["API Endpoints", "—", "✓", "✓", "—"],
+                ["API Endpoints", "—", "~", "✓", "—"],
                 ["URL / llms.txt Scanning", "—", "—", "—", "✓"],
                 ["Shared Prompts", "—", "—", "—", "✓"],
-                ["Trust Grading (A-F)", "—", "—", "—", "✓"],
+                ["Trust Grading (A-F)", "—", "—", "~", "✓"],
                 ["Multi-Model Routing", "—", "—", "—", "✓"],
                 ["AI Deep Scan", "—", "—", "~", "✓"],
                 ["Auto-Learning", "—", "—", "—", "✓"],
-                ["Open Source Patterns", "—", "—", "—", "✓"],
+                ["MCP Tool for Agents", "—", "—", "—", "✓"],
               ].map(([feature, ...vals], i) => (
                 <tr key={i} className="border-b border-zinc-800/50">
                   <td className="py-2 px-2 sm:px-3 text-zinc-300 font-medium">{feature}</td>
                   {vals.map((v, j) => (
-                    <td key={j} className={`py-2 px-2 sm:px-3 text-center ${j === 3 ? (v === "✓" ? "text-green-400 font-bold" : "text-zinc-600") : v === "✓" ? "text-zinc-400" : "text-zinc-700"}`}>
+                    <td key={j} className={`py-2 px-2 sm:px-3 text-center ${j === 3 ? (v === "✓" ? "text-green-400 font-bold" : "text-zinc-600") : v === "✓" ? "text-zinc-400" : v === "~" ? "text-yellow-600" : "text-zinc-700"}`}>
                       {v}
                     </td>
                   ))}
