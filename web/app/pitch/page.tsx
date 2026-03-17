@@ -168,11 +168,10 @@ const slides = [
                 ["URL / llms.txt Scanning", "—", "—", "—", "✓"],
                 ["Shared Prompts", "—", "—", "—", "✓"],
                 ["Trust Grading (A-F)", "—", "—", "—", "✓"],
-                ["Human-in-the-Loop", "—", "—", "—", "✓"],
+                ["Multi-Model Routing", "—", "—", "—", "✓"],
                 ["AI Deep Scan", "—", "—", "~", "✓"],
                 ["Auto-Learning", "—", "—", "—", "✓"],
                 ["Open Source Patterns", "—", "—", "—", "✓"],
-                ["Multi-Model Routing", "—", "—", "—", "✓"],
               ].map(([feature, ...vals], i) => (
                 <tr key={i} className="border-b border-zinc-800/50">
                   <td className="py-2 px-2 sm:px-3 text-zinc-300 font-medium">{feature}</td>
