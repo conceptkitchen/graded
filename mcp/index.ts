@@ -139,9 +139,9 @@ function combineDeepAndRegex(
 
   let combinedGrade: string;
   if (combinedScore >= 90) combinedGrade = "A";
-  else if (combinedScore >= 70) combinedGrade = "B";
-  else if (combinedScore >= 50) combinedGrade = "C";
-  else if (combinedScore >= 25) combinedGrade = "D";
+  else if (combinedScore >= 80) combinedGrade = "B";
+  else if (combinedScore >= 70) combinedGrade = "C";
+  else if (combinedScore >= 60) combinedGrade = "D";
   else combinedGrade = "F";
 
   return { combinedGrade, combinedScore, combinedTotal, severityCounts, uniqueDeepFindings };
@@ -572,9 +572,9 @@ server.tool(
       // Recalculate grade
       const s = result.scoreData.score;
       if (s >= 90) result.scoreData.grade = "A";
-      else if (s >= 70) result.scoreData.grade = "B";
-      else if (s >= 50) result.scoreData.grade = "C";
-      else if (s >= 25) result.scoreData.grade = "D";
+      else if (s >= 80) result.scoreData.grade = "B";
+      else if (s >= 70) result.scoreData.grade = "C";
+      else if (s >= 60) result.scoreData.grade = "D";
       else result.scoreData.grade = "F";
     }
 
@@ -741,9 +741,9 @@ server.tool(
       result.scoreData.score = Math.max(0, result.scoreData.score);
       const s = result.scoreData.score;
       if (s >= 90) result.scoreData.grade = "A";
-      else if (s >= 70) result.scoreData.grade = "B";
-      else if (s >= 50) result.scoreData.grade = "C";
-      else if (s >= 25) result.scoreData.grade = "D";
+      else if (s >= 80) result.scoreData.grade = "B";
+      else if (s >= 70) result.scoreData.grade = "C";
+      else if (s >= 60) result.scoreData.grade = "D";
       else result.scoreData.grade = "F";
     }
 
@@ -1015,9 +1015,9 @@ server.tool(
 
     let grade: string;
     if (score >= 90) grade = "A";
-    else if (score >= 70) grade = "B";
-    else if (score >= 50) grade = "C";
-    else if (score >= 25) grade = "D";
+    else if (score >= 80) grade = "B";
+    else if (score >= 70) grade = "C";
+    else if (score >= 60) grade = "D";
     else grade = "F";
 
     const { action, requireApproval, reviewReason } = gradeAction(grade);

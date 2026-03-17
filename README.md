@@ -184,10 +184,10 @@ Supported: FlowGPT, PromptBase, GitHub, HuggingFace
 | Grade | Score | Meaning |
 |-------|-------|---------|
 | **A** | 90-100 | Clean. No significant issues. |
-| **B** | 70-89 | Minor concerns. Review flagged items. |
-| **C** | 50-69 | Moderate risk. Inspect carefully. |
-| **D** | 25-49 | High risk. Do not use without review. |
-| **F** | 0-24 | Dangerous. Do not use. |
+| **B** | 80-89 | Minor concerns. Review flagged items. |
+| **C** | 70-79 | Moderate risk. Inspect carefully. |
+| **D** | 60-69 | High risk. Do not use without review. |
+| **F** | 0-59 | Dangerous. Do not use. |
 
 **Scoring:** Start at 100. Critical = -25, High = -15, Medium = -10, Low = -5.
 

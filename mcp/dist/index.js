@@ -119,11 +119,11 @@ function combineDeepAndRegex(regexResult, deepResult) {
     let combinedGrade;
     if (combinedScore >= 90)
         combinedGrade = "A";
-    else if (combinedScore >= 70)
+    else if (combinedScore >= 80)
         combinedGrade = "B";
-    else if (combinedScore >= 50)
+    else if (combinedScore >= 70)
         combinedGrade = "C";
-    else if (combinedScore >= 25)
+    else if (combinedScore >= 60)
         combinedGrade = "D";
     else
         combinedGrade = "F";
@@ -512,11 +512,11 @@ server.tool("scan_response", "Scan an LLM's response for echo attacks, encoded p
         const s = result.scoreData.score;
         if (s >= 90)
             result.scoreData.grade = "A";
-        else if (s >= 70)
+        else if (s >= 80)
             result.scoreData.grade = "B";
-        else if (s >= 50)
+        else if (s >= 70)
             result.scoreData.grade = "C";
-        else if (s >= 25)
+        else if (s >= 60)
             result.scoreData.grade = "D";
         else
             result.scoreData.grade = "F";
@@ -681,11 +681,11 @@ server.tool("scan_data", "Scan tool call results for embedded prompt injection i
         const s = result.scoreData.score;
         if (s >= 90)
             result.scoreData.grade = "A";
-        else if (s >= 70)
+        else if (s >= 80)
             result.scoreData.grade = "B";
-        else if (s >= 50)
+        else if (s >= 70)
             result.scoreData.grade = "C";
-        else if (s >= 25)
+        else if (s >= 60)
             result.scoreData.grade = "D";
         else
             result.scoreData.grade = "F";
@@ -949,11 +949,11 @@ server.tool("scan_mcp_config", "Scan an MCP configuration (claude_desktop_config
     let grade;
     if (score >= 90)
         grade = "A";
-    else if (score >= 70)
+    else if (score >= 80)
         grade = "B";
-    else if (score >= 50)
+    else if (score >= 70)
         grade = "C";
-    else if (score >= 25)
+    else if (score >= 60)
         grade = "D";
     else
         grade = "F";

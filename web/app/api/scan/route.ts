@@ -119,9 +119,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (combinedScore >= 90) combinedGrade = "A";
-    else if (combinedScore >= 70) combinedGrade = "B";
-    else if (combinedScore >= 50) combinedGrade = "C";
-    else if (combinedScore >= 25) combinedGrade = "D";
+    else if (combinedScore >= 80) combinedGrade = "B";
+    else if (combinedScore >= 70) combinedGrade = "C";
+    else if (combinedScore >= 60) combinedGrade = "D";
     else combinedGrade = "F";
 
     // LEARN: If deep scan found things regex missed, generate new patterns
