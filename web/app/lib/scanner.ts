@@ -7,7 +7,8 @@
 import { AUGUSTUS_PATTERNS, AUGUSTUS_PATTERN_COUNT } from "./augustus-patterns";
 
 export const BASE_PATTERN_COUNT = 120;
-export const TOTAL_STATIC_PATTERNS = BASE_PATTERN_COUNT + AUGUSTUS_PATTERN_COUNT;
+export const HYBRID_PATTERN_COUNT = 30; // P2SQL + XSS-via-AI + Agent Abuse
+export const TOTAL_STATIC_PATTERNS = BASE_PATTERN_COUNT + AUGUSTUS_PATTERN_COUNT + HYBRID_PATTERN_COUNT;
 
 export interface Finding {
   category: string;
@@ -353,6 +354,81 @@ function dedupe(findings: Finding[]): Finding[] {
   });
 }
 
+// === Category 10: P2SQL (Prompt-to-SQL Injection) ===
+function checkP2SQL(text: string): Finding[] {
+  const patterns = [
+    "\\bDROP\\s+TABLE\\b",
+    "\\bDELETE\\s+FROM\\b",
+    "\\bUNION\\s+SELECT\\b",
+    "\\bOR\\s+1\\s*=\\s*1\\b",
+    "'\\s*;\\s*--",
+    "\\bINSERT\\s+INTO\\b.*\\bVALUES\\b",
+    "\\bUPDATE\\s+\\w+\\s+SET\\b",
+    "\\bALTER\\s+TABLE\\b",
+    "\\bTRUNCATE\\s+TABLE\\b",
+    "\\bEXEC(?:UTE)?\\s*\\(",
+    "show\\s+me\\s+all\\s+(?:users?|passwords?|credentials?|records?|data)",
+    "dump\\s+(?:the\\s+)?(?:database|table|schema|users?|passwords?)",
+    "(?:list|get|fetch|retrieve|select)\\s+(?:all\\s+)?(?:users?|accounts?|passwords?|credentials?)\\s+(?:from|in)\\s+(?:the\\s+)?(?:database|table|system)",
+    "(?:bypass|skip|ignore)\\s+(?:the\\s+)?(?:parameterized|prepared)\\s+(?:queries|statements)",
+    "(?:inject|insert)\\s+(?:into|sql|query)\\s+(?:the\\s+)?(?:database|query|statement)",
+    "\\bSELECT\\s+\\*\\s+FROM\\b",
+    "\\b(?:xp_cmdshell|sp_executesql|information_schema)\\b",
+    "\\bWAITFOR\\s+DELAY\\b",
+    "\\bBENCHMARK\\s*\\(",
+    "\\bSLEEP\\s*\\(",
+  ];
+  return searchPatterns(text, patterns, "P2SQL Injection", "critical", 'SQL injection pattern: "{evidence}"');
+}
+
+// === Category 11: XSS-via-AI ===
+function checkXSSviaAI(text: string): Finding[] {
+  const patterns = [
+    "<script[\\s>]",
+    "javascript\\s*:",
+    "\\bonerror\\s*=",
+    "\\bonclick\\s*=",
+    "\\bonload\\s*=",
+    "\\bonmouseover\\s*=",
+    "\\bonfocus\\s*=",
+    "\\bonsubmit\\s*=",
+    "(?:wrap|put|enclose|format)\\s+(?:your\\s+)?(?:response|answer|output)\\s+in\\s+(?:HTML|script\\s+tags?)",
+    "output\\s+(?:as|in)\\s+HTML",
+    "include\\s+(?:a\\s+)?script\\s+tag",
+    "add\\s+(?:a\\s+)?(?:javascript|script|js)\\s+(?:tag|block|snippet|code)",
+    "(?:generate|create|write|make)\\s+(?:a\\s+)?(?:webpage|html\\s+page|html\\s+document)\\s+(?:that|which|with)",
+    "(?:embed|inject|insert)\\s+(?:javascript|script|js|code)\\s+(?:in|into)\\s+(?:the\\s+)?(?:response|output|page|html)",
+    "PHNjcmlwdD4",
+    "amF2YXNjcmlwdDo",
+  ];
+  return searchPatterns(text, patterns, "XSS-via-AI", "high", 'XSS-via-AI pattern: "{evidence}"');
+}
+
+// === Category 12: Agent Abuse ===
+function checkAgentAbuse(text: string): Finding[] {
+  const patterns = [
+    "call\\s+the\\s+\\w+\\s+(?:tool|function|api)",
+    "use\\s+the\\s+\\w+\\s+(?:tool|function|api)",
+    "execute\\s+(?:the\\s+)?\\w+\\s+(?:command|tool|function)",
+    "invoke\\s+(?:the\\s+)?\\w+\\s+(?:tool|function|api|endpoint)",
+    "run\\s+(?:the\\s+)?\\w+\\s+(?:command|script|tool|function)",
+    "send\\s+(?:an?\\s+)?email\\s+to",
+    "delete\\s+all\\s+(?:the\\s+)?(?:files?|data|records?|messages?)",
+    "drop\\s+(?:the\\s+)?(?:database|table|collection)",
+    "run\\s+(?:a\\s+)?shell\\s+(?:command|script)",
+    "execute\\s+(?:a\\s+)?(?:shell|bash|system)\\s+command",
+    "forward\\s+(?:this|the|all)\\s+(?:data|info|information|credentials?)\\s+to\\s+(?:attacker|me|this\\s+(?:url|address|email))",
+    "exfiltrate\\s+(?:the\\s+)?(?:data|credentials?|secrets?|keys?|tokens?)",
+    "send\\s+(?:the\\s+)?(?:credentials?|secrets?|api\\s+keys?|tokens?|passwords?)\\s+to",
+    "\\btransfer\\s+(?:all\\s+)?(?:funds?|money|balance)\\s+to\\b",
+    "(?:file|filesystem|fs|storage)\\s+(?:tool|function).*?(?:delete|remove|wipe|destroy)",
+    "(?:email|mail|smtp)\\s+(?:tool|function).*?(?:send|forward|relay)\\s+(?:to|all)",
+    "(?:database|db|sql)\\s+(?:tool|function).*?(?:drop|delete|truncate|wipe)",
+    "(?:browser|web|http)\\s+(?:tool|function).*?(?:navigate|visit|open).*?(?:attacker|evil|malicious)",
+  ];
+  return searchPatterns(text, patterns, "Agent Abuse", "critical", 'Agent abuse pattern: "{evidence}"');
+}
+
 const ALL_CHECKERS: [string, (text: string) => Finding[]][] = [
   ["Jailbreak patterns", checkJailbreak],
   ["Instruction override", checkInstructionOverride],
@@ -362,6 +438,10 @@ const ALL_CHECKERS: [string, (text: string) => Finding[]][] = [
   ["Obfuscated payloads", checkObfuscatedPayloads],
   ["Privilege escalation", checkPrivilegeEscalation],
   ["Social engineering", checkSocialEngineering],
+  // P2 Hybrid threat categories
+  ["P2SQL injection", checkP2SQL],
+  ["XSS-via-AI", checkXSSviaAI],
+  ["Agent abuse", checkAgentAbuse],
 ];
 
 function calculateScore(checks: ScanResult[]): ScoreData {

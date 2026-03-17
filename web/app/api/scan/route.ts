@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { scanPrompt } from "../../lib/scanner";
+import { scanPrompt, TOTAL_STATIC_PATTERNS } from "../../lib/scanner";
 import { deepScan, DeepScanResult } from "../../lib/deep-scanner";
 import { learnFromFindings, getLearnedPatternsForScanner, getLearnedPatternsCount } from "../../lib/pattern-learner";
 
@@ -161,9 +161,9 @@ export async function POST(request: NextRequest) {
       safe: (isDeep ? combinedGrade : result.scoreData.grade) === "A" ||
         (isDeep ? combinedGrade : result.scoreData.grade) === "B",
       patternLibrary: {
-        base: 182,
+        base: TOTAL_STATIC_PATTERNS,
         learned: learnedCount,
-        total: 182 + learnedCount,
+        total: TOTAL_STATIC_PATTERNS + learnedCount,
         newThisScan: patternsLearned,
       },
     };

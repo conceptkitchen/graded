@@ -115,7 +115,7 @@ const slides = [
         <div className="grid grid-cols-2 gap-3 max-w-2xl w-full mb-4">
           <div className="border border-green-800 rounded-xl p-3 bg-green-950/20">
             <div className="text-green-400 text-[10px] uppercase tracking-widest mb-1 font-bold">Layer 1 &mdash; Regex</div>
-            <div className="text-2xl font-bold text-white">189+</div>
+            <div className="text-2xl font-bold text-white">212+</div>
             <div className="text-xs text-zinc-400">patterns. Instant. Deterministic.</div>
           </div>
           <div className="border border-purple-800 rounded-xl p-3 bg-purple-950/20">
@@ -193,7 +193,7 @@ const slides = [
           <div className="grid grid-cols-3 gap-2 sm:gap-3 text-center text-[10px] sm:text-xs">
             <div>
               <div className="text-white font-bold mb-1">Base Engine</div>
-              <div className="text-zinc-500">120 hand-built + 62 open source. 9 attack categories.</div>
+              <div className="text-zinc-500">120 hand-built + 62 open source + 30 hybrid. 11 attack categories.</div>
             </div>
             <div>
               <div className="text-white font-bold mb-1">Open Source Sync</div>
@@ -228,9 +228,9 @@ const slides = [
             <div className="text-[10px] text-zinc-600 mt-1">Kalibr + Protocol Labs</div>
           </div>
           <div className="border border-zinc-700 rounded-xl p-4 bg-zinc-900/50 text-center">
-            <div className="text-3xl font-black text-purple-400 mb-1">189+</div>
+            <div className="text-3xl font-black text-purple-400 mb-1">212+</div>
             <div className="text-xs text-zinc-400">Attack patterns</div>
-            <div className="text-[10px] text-zinc-600 mt-1">120 hand-built + Augustus</div>
+            <div className="text-[10px] text-zinc-600 mt-1">120 base + 62 Augustus + 30 hybrid</div>
           </div>
           <div className="border border-zinc-700 rounded-xl p-4 bg-zinc-900/50 text-center">
             <div className="text-3xl font-black text-blue-400 mb-1">OSS</div>
@@ -293,7 +293,7 @@ const slides = [
         </div>
         <div className="max-w-lg space-y-3 text-base text-zinc-400 mb-10">
           <p>Built Graded in 3 hours. Deployed to 7 surfaces. Won 2 prizes.</p>
-          <p>Open source engine. 189+ attack patterns. Multi-model deep scan via <span className="text-purple-400">Kalibr</span>.</p>
+          <p>Open source engine. 212+ attack patterns. 6 MCP tools. Multi-model deep scan via <span className="text-purple-400">Kalibr</span>.</p>
         </div>
         <div className="border border-green-800 rounded-xl p-6 bg-green-950/20 max-w-md w-full">
           <div className="text-green-400 text-xs uppercase tracking-widest mb-3 font-bold">Raising</div>

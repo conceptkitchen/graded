@@ -479,7 +479,7 @@ export default function Home() {
               {
                 icon: "\uD83D\uDD0D",
                 title: `${livePatternCount}+ Attack Patterns`,
-                desc: "9 attack categories. 120 base + 62 Augustus open source patterns + AI-learned. DAN jailbreaks, ChatML injection, RAG poisoning, steganography, and more.",
+                desc: "11 attack categories. 120 base + 62 Augustus open source + 30 hybrid patterns + AI-learned. DAN jailbreaks, ChatML injection, RAG poisoning, P2SQL injection, agent abuse, and more.",
               },
               {
                 icon: "\uD83E\uDDE0",
@@ -672,10 +672,13 @@ export default function Home() {
                       <div className="text-zinc-300">{`}`}</div>
                     </div>
                     <div>
-                      <div className="text-zinc-500"># 3. Your agent now has these tools:</div>
+                      <div className="text-zinc-500"># 3. Your agent now has 6 tools:</div>
                       <div className="text-zinc-500"># scan_prompt - Grade a single prompt A-F</div>
                       <div className="text-zinc-500"># scan_url - Scan a URL, llms.txt, or web page</div>
                       <div className="text-zinc-500"># scan_prompts_batch - Grade multiple prompts</div>
+                      <div className="text-zinc-500"># scan_response - Scan LLM output for threats</div>
+                      <div className="text-zinc-500"># scan_data - Scan tool results for injection</div>
+                      <div className="text-zinc-500"># scan_mcp_config - Audit MCP server configs</div>
                     </div>
                   </div>
                 </div>

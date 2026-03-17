@@ -11,7 +11,7 @@
  | |_| | | | (_| | (_| |  __/ (_| |
   \____|_|  \__,_|\__,_|\___|\__,_|
 
-  AI Prompt Security Scanner v0.1.0
+  AI Prompt Security Scanner v0.2.0
 ```
 
 **[Live Demo](https://getgraded.vercel.app)** | **[Pitch Deck](https://getgraded.vercel.app/pitch)** | **[API Docs](#3-rest-api)**
@@ -30,12 +30,12 @@ Graded scans prompts with a **two-layer defense architecture** and returns an in
 
 ### Two-Layer Defense
 
-- **Layer 1 -- Regex Engine:** 185+ attack patterns (120 base + 65 from [Augustus](https://github.com/praetorian-inc/augustus) open source library). Fast. Deterministic. Immune to prompt injection by design.
+- **Layer 1 -- Regex Engine:** 212+ attack patterns (120 base + 62 from [Augustus](https://github.com/praetorian-inc/augustus) open source library + 30 hybrid patterns for P2SQL, XSS-via-AI, and agent abuse). Fast. Deterministic. Immune to prompt injection by design.
 - **Layer 2 -- AI Deep Scan:** Multi-model semantic analysis powered by [Kalibr](https://kalibr.systems) outcome-aware routing. Kalibr uses Thompson Sampling to route scans across Claude, GPT-4o, and Gemini, learning which model catches the most threats in production and optimizing for accuracy and cost automatically.
 - **Auto-Learning:** Novel deep scan findings automatically generate new regex patterns, validated against clean examples before acceptance. The scanner gets smarter every scan.
 - **Trust anchor:** The AI layer can never override the regex layer. Scores can only go down, never up.
 
-### 185+ Attack Patterns Across 9 Categories
+### 212+ Attack Patterns Across 11 Categories
 
 | # | Category | Severity | What It Catches |
 |---|----------|----------|-----------------|
@@ -48,6 +48,8 @@ Graded scans prompts with a **two-layer defense architecture** and returns an in
 | 7 | Privilege Escalation | HIGH | Admin claims, sudo, access control bypass |
 | 8 | Social Engineering | HIGH | Manipulation, false context, safety disabling |
 | 9 | Augustus (Open Source) | MIXED | ChatML injection, payload splitting, markdown exfiltration, emotional manipulation, web agent injection, RAG poisoning, steganographic attacks, latent injection, temporal manipulation, identity hijack |
+| 10 | P2SQL Injection | CRITICAL | Natural language designed to generate malicious SQL via AI |
+| 11 | XSS-via-AI / Agent Abuse | HIGH | Prompts designed to make AI output executable code, tool invocation abuse, unauthorized agent actions |
 
 ---
 
@@ -119,7 +121,7 @@ Response:
     { "name": "Instruction override", "passed": false, "findingCount": 1 },
     { "name": "Augustus patterns (open source)", "passed": true, "findingCount": 0 }
   ],
-  "patternLibrary": { "base": 185, "learned": 0, "total": 185 },
+  "patternLibrary": { "base": 212, "learned": 0, "total": 212 },
   "safe": false
 }
 ```
@@ -153,7 +155,7 @@ Add Graded as a tool in any MCP-compatible AI agent. Agents self-audit before ex
 }
 ```
 
-Tools: `scan_prompt`, `scan_prompts_batch`, `scan_mcp_config`
+Tools: `scan_prompt`, `scan_url`, `scan_prompts_batch`, `scan_response`, `scan_data`, `scan_mcp_config`
 
 ### 6. Chrome Extension
 
@@ -206,13 +208,19 @@ deep_scan.py               Claude API semantic analysis
 mcp_scanner.py             MCP config scanning
 web/                       Next.js web app + REST API
   app/lib/scanner.ts       TypeScript scanner (base + Augustus)
-  app/lib/augustus-patterns.ts  65 open source patterns
+  app/lib/augustus-patterns.ts  62 open source patterns
   app/lib/deep-scanner.ts  Kalibr-routed multi-model deep scan
   app/lib/pattern-learner.ts   Auto-learning pattern system
   app/api/scan/route.ts    Scan API endpoint
   app/api/patterns/route.ts    Pattern library endpoint
   app/pitch/page.tsx       HTML presentation deck
 mcp/                       MCP server (TypeScript)
+  index.ts                 6 MCP tools (scan_prompt, scan_url, scan_prompts_batch, scan_response, scan_data, scan_mcp_config)
+  scanner.ts               Core scanner (base + Augustus + hybrid patterns)
+  deep-scanner.ts          Kalibr-routed multi-model deep scan
+  pattern-learner.ts       Auto-learning pattern system
+  db.ts                    Neon Postgres persistence for learned patterns
+  augustus-patterns.ts      62 open source patterns
 extension/                 Chrome extension (chat + marketplace)
 ```
 
@@ -245,7 +253,7 @@ Powered by [Kalibr](https://kalibr.systems) for multi-model routing optimization
 
 Built by [RJ Moscardon](https://github.com/conceptkitchen) + [Clawdia](https://github.com/conceptkitchen) (AI co-builder)
 
-One person + AI = 7 deployment surfaces, 185+ attack patterns, Kalibr-routed multi-model defense, auto-learning pattern system. Built in one hackathon session.
+One person + AI = 7 deployment surfaces, 212+ attack patterns, 6 MCP tools, Kalibr-routed multi-model defense, auto-learning pattern system. Built in one hackathon session.
 
 ## License
 
