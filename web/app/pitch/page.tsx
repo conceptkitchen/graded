@@ -291,12 +291,15 @@ const slides = [
             🏆 Protocol Labs AI Safety Prize
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <div className="px-3 py-1 rounded-full border border-green-500/40 bg-green-500/10 text-green-400 text-[10px] sm:text-xs font-bold tracking-wide">
             Open source on GitHub
           </div>
           <div className="px-3 py-1 rounded-full border border-zinc-700 bg-zinc-900/50 text-zinc-400 text-[10px] sm:text-xs">
-            Dogfooded on our own AI agent
+            Live in production on our own AI agent
+          </div>
+          <div className="px-3 py-1 rounded-full border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 text-[10px] sm:text-xs font-bold tracking-wide">
+            Design partner conversations active
           </div>
         </div>
       </div>
@@ -314,39 +317,43 @@ const slides = [
           <div className="border border-green-800 rounded-xl p-3 bg-green-950/20 text-center">
             <div className="text-green-400 text-[10px] uppercase tracking-widest mb-1 font-bold">Open</div>
             <div className="text-lg font-bold text-white mb-1">Free</div>
-            <div className="text-xs text-zinc-400 mb-2">Try it free. See what your AI is consuming.</div>
+            <div className="text-xs text-zinc-400 mb-2">See what your AI is consuming.</div>
             <div className="text-[10px] text-zinc-600">Web, CLI, Chrome, MCP &bull; 50 scans/day</div>
+            <div className="text-[10px] text-green-400/60 mt-1 font-medium">Developers &bull; Researchers</div>
           </div>
           <div className="border border-purple-800 rounded-xl p-3 bg-purple-950/20 text-center">
             <div className="text-purple-400 text-[10px] uppercase tracking-widest mb-1 font-bold">Builder</div>
             <div className="text-lg font-bold text-white mb-1">$29<span className="text-xs text-zinc-500">/mo</span></div>
-            <div className="text-xs text-zinc-400 mb-2">Protect your agent. API access at scale.</div>
+            <div className="text-xs text-zinc-400 mb-2">Protect your agent at scale.</div>
             <div className="text-[10px] text-zinc-600">10K scans/mo &bull; 100 deep scans &bull; Webhooks</div>
+            <div className="text-[10px] text-purple-400/60 mt-1 font-medium">Indie AI builders &bull; Solopreneurs</div>
           </div>
           <div className="border border-yellow-800 rounded-xl p-3 bg-yellow-950/20 text-center">
             <div className="text-yellow-400 text-[10px] uppercase tracking-widest mb-1 font-bold">Shield</div>
             <div className="text-lg font-bold text-white mb-1">$149<span className="text-xs text-zinc-500">/mo</span></div>
-            <div className="text-xs text-zinc-400 mb-2">Production middleware. The 4-gate security layer.</div>
+            <div className="text-xs text-zinc-400 mb-2">4-gate middleware for production.</div>
             <div className="text-[10px] text-zinc-600">50K scans &bull; CaMeL SDK &bull; Audit log &bull; 5 seats</div>
+            <div className="text-[10px] text-yellow-400/60 mt-1 font-medium">AI startups &bull; Engineering teams</div>
           </div>
           <div className="border border-red-800 rounded-xl p-3 bg-red-950/20 text-center">
             <div className="text-red-400 text-[10px] uppercase tracking-widest mb-1 font-bold">Verified</div>
             <div className="text-lg font-bold text-white mb-1">$499<span className="text-xs text-zinc-500">/mo</span></div>
             <div className="text-xs text-zinc-400 mb-2">Trust badges for your platform.</div>
             <div className="text-[10px] text-zinc-600">Unlimited &bull; Badges &bull; Threat feed &bull; Custom SLA</div>
+            <div className="text-[10px] text-red-400/60 mt-1 font-medium">Marketplaces &bull; Platforms</div>
           </div>
         </div>
         <div className="flex items-center gap-2 text-[10px] sm:text-xs text-zinc-500 mt-1">
-          <span className="text-green-400">See threats</span>
-          <span>&rarr;</span>
-          <span className="text-purple-400">Protect your agent</span>
-          <span>&rarr;</span>
-          <span className="text-yellow-400">Secure production</span>
-          <span>&rarr;</span>
-          <span className="text-red-400">Certify your platform</span>
+          <span className="text-green-400">Free tools</span>
+          <span className="text-zinc-600">&rarr;</span>
+          <span className="text-purple-400">API integration</span>
+          <span className="text-zinc-600">&rarr;</span>
+          <span className="text-yellow-400">Production middleware</span>
+          <span className="text-zinc-600">&rarr;</span>
+          <span className="text-red-400">Platform certification</span>
         </div>
         <p className="text-xs text-zinc-500 text-center max-w-lg mt-3">
-          Every scan makes the engine smarter. <span className="text-white font-semibold">Integration depth is the moat.</span>
+          Land with free scans. Expand as agents go to production. <span className="text-white font-semibold">Integration depth is the moat.</span>
         </p>
       </div>
     ),
