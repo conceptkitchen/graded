@@ -108,7 +108,7 @@
 ### SLIDE 9: TEAM + ASK (10 sec)
 *Energy: direct, eye contact, no apology*
 
-"I'm RJ Moscardon. Solo founder, but not solo. I built a 92-agent AI team across 21 specialized units. This product, this pitch, this go-to-market — all built with AI infrastructure I designed. I'm raising 500K pre-seed on a post-money SAFE. Looking for design partners and marketplace integrations."
+"I'm RJ Moscardon. Solo founder, but not solo. I built a team of 92 expert AI consultants and agents across 21 specialized units. This product, this pitch, this go-to-market — all built with AI infrastructure I designed. I'm raising 500K pre-seed on a post-money SAFE. Looking for design partners and marketplace integrations."
 
 > **Sable:** "Solo founder, but not solo" is the turn. Let it land. The 92 number is specific enough to be real, big enough to raise eyebrows. Then pivot straight to the ask.
 > **Cass:** $500K is modest. That's a feature, not a bug. It says "I'm capital-efficient." State it and move.
@@ -153,7 +153,7 @@ If pushed: "Aikido was pre-revenue at pre-seed too. They're at $1B valuation now
 ---
 
 ### 2. "You're a solo founder. Why should we bet on you?"
-**"Solo on equity, not solo on capability. I built a 92-agent AI team across 21 specialized units — sales, product, security, content. This product was built in 48 hours. I can scan a prompt on my phone right now while we're talking. I'm not pitching a slide deck, I'm pitching a live product."**
+**"Solo on equity, not solo on capability. I built a team of 92 expert AI consultants and agents across 21 specialized units — sales, product, security, content. This product was built in 48 hours. I can scan a prompt on my phone right now while we're talking. I'm not pitching a slide deck, I'm pitching a live product."**
 
 If pushed: "Solo founders built Midjourney, Pocketbase, and Cursor's first version. The difference is I'm building with AI as my team, not just my product. I'm looking for a technical cofounder, and this raise gives me the runway to find the right one, not a fast one."
 

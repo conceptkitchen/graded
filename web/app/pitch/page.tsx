@@ -289,7 +289,7 @@ const slides = [
           RJ Moscardon
         </div>
         <div className="text-lg sm:text-xl text-zinc-400 mb-8">
-          Solo founder. 92 AI consultants and agents. 21 purpose-built teams.
+          Solo founder. 92 expert AI consultants and agents. 21 purpose-built teams.
         </div>
         <div className="max-w-lg space-y-3 text-base text-zinc-400 mb-10">
           <p>Built Graded in 48 hours. Deployed to 7 surfaces. Won 2 prizes.</p>
