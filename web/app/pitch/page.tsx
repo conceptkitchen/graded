@@ -145,19 +145,19 @@ const slides = [
   {
     id: "moat",
     content: (
-      <div className="flex flex-col items-center justify-center h-full px-4 sm:px-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-8 text-center">
+      <div className="flex flex-col items-center justify-start h-full px-4 sm:px-6 pt-6 sm:pt-10">
+        <h2 className="text-xl sm:text-3xl font-bold text-white mb-4 sm:mb-8 text-center">
           They scan the pipes. <span className="text-green-500">We scan what flows through them.</span>
         </h2>
-        <div className="overflow-x-auto w-full max-w-2xl">
-          <table className="w-full text-xs sm:text-sm border-collapse">
+        <div className="w-full max-w-2xl">
+          <table className="w-full text-[11px] sm:text-sm border-collapse">
             <thead>
               <tr className="border-b border-zinc-700">
-                <th className="text-left py-2 px-2 sm:px-3 text-zinc-500"></th>
-                <th className="py-2 px-2 sm:px-3 text-zinc-500">mcp-scan</th>
-                <th className="py-2 px-2 sm:px-3 text-zinc-500">Invariant</th>
-                <th className="py-2 px-2 sm:px-3 text-zinc-500">PromptSec</th>
-                <th className="py-2 px-2 sm:px-3 text-green-400 font-bold">Graded</th>
+                <th className="text-left py-1 sm:py-2 px-1 sm:px-3 text-zinc-500"></th>
+                <th className="py-1 sm:py-2 px-1 sm:px-3 text-zinc-500">mcp-scan</th>
+                <th className="py-1 sm:py-2 px-1 sm:px-3 text-zinc-500">Invariant</th>
+                <th className="py-1 sm:py-2 px-1 sm:px-3 text-zinc-500">PromptSec</th>
+                <th className="py-1 sm:py-2 px-1 sm:px-3 text-green-400 font-bold">Graded</th>
               </tr>
             </thead>
             <tbody>
@@ -174,9 +174,9 @@ const slides = [
                 ["MCP Tool for Agents", "—", "—", "—", "✓"],
               ].map(([feature, ...vals], i) => (
                 <tr key={i} className="border-b border-zinc-800/50">
-                  <td className="py-2 px-2 sm:px-3 text-zinc-300 font-medium">{feature}</td>
+                  <td className="py-1 sm:py-2 px-1 sm:px-3 text-zinc-300 font-medium">{feature}</td>
                   {vals.map((v, j) => (
-                    <td key={j} className={`py-2 px-2 sm:px-3 text-center ${j === 3 ? (v === "✓" ? "text-green-400 font-bold" : "text-zinc-600") : v === "✓" ? "text-zinc-400" : v === "~" ? "text-yellow-600" : "text-zinc-700"}`}>
+                    <td key={j} className={`py-1 sm:py-2 px-1 sm:px-3 text-center ${j === 3 ? (v === "✓" ? "text-green-400 font-bold" : "text-zinc-600") : v === "✓" ? "text-zinc-400" : v === "~" ? "text-yellow-600" : "text-zinc-700"}`}>
                       {v}
                     </td>
                   ))}
@@ -185,12 +185,12 @@ const slides = [
             </tbody>
           </table>
         </div>
-        <p className="mt-6 text-sm text-zinc-500 text-center">
+        <p className="mt-3 sm:mt-6 text-xs sm:text-sm text-zinc-500 text-center">
           Security middleware for AI. <span className="text-white font-semibold">The layer between every agent and the content it consumes.</span>
         </p>
-        <div className="mt-4 px-4 py-4 border border-green-800/50 rounded-lg bg-green-950/10 max-w-2xl">
-          <div className="text-xs text-green-400 uppercase tracking-widest mb-3 text-center font-bold">🧬 The engine gets smarter 3 ways</div>
-          <div className="grid grid-cols-3 gap-3 text-center text-xs">
+        <div className="mt-3 sm:mt-4 px-3 py-3 sm:px-4 sm:py-4 border border-green-800/50 rounded-lg bg-green-950/10 max-w-2xl">
+          <div className="text-[10px] sm:text-xs text-green-400 uppercase tracking-widest mb-2 sm:mb-3 text-center font-bold">🧬 The engine gets smarter 3 ways</div>
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 text-center text-[10px] sm:text-xs">
             <div>
               <div className="text-white font-bold mb-1">Base Engine</div>
               <div className="text-zinc-500">120 hand-built + 62 open source. 9 attack categories.</div>
