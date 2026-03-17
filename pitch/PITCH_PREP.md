@@ -88,10 +88,10 @@
 ### SLIDE 7: TRACTION (10 sec)
 *Energy: pride, speed, proof*
 
-"Built in 48 hours. 7 live surfaces. Web, CLI, API, npm, MCP server, Chrome extension, marketplace scanner. Won two hackathon prizes: Kalibr Resilience Challenge and Protocol Labs AI Safety."
+"Built in 3 hours. 7 live surfaces. Web, CLI, API, npm, MCP server, Chrome extension, marketplace scanner. Won two hackathon prizes: Kalibr Resilience Challenge and Protocol Labs AI Safety."
 
 > **Sable:** Rattle the 7 surfaces fast. The speed of the list IS the point. It communicates velocity.
-> **Cass:** "48 hours" is your founder signal. At pre-seed investors bet on the person, not the product. This slide is about YOU.
+> **Cass:** "3 hours" is your founder signal. At pre-seed investors bet on the person, not the product. This slide is about YOU.
 
 ---
 
@@ -153,7 +153,7 @@ If pushed: "Aikido was pre-revenue at pre-seed too. They're at $1B valuation now
 ---
 
 ### 2. "You're a solo founder. Why should we bet on you?"
-**"Solo on equity, not solo on capability. I built a team of 92 expert AI consultants and agents across 21 specialized units — sales, product, security, content. This product was built in 48 hours. I can scan a prompt on my phone right now while we're talking. I'm not pitching a slide deck, I'm pitching a live product."**
+**"Solo on equity, not solo on capability. I built a team of 92 expert AI consultants and agents across 21 specialized units — sales, product, security, content. This product was built in 3 hours. I can scan a prompt on my phone right now while we're talking. I'm not pitching a slide deck, I'm pitching a live product."**
 
 If pushed: "Solo founders built Midjourney, Pocketbase, and Cursor's first version. The difference is I'm building with AI as my team, not just my product. I'm looking for a technical cofounder, and this raise gives me the runway to find the right one, not a fast one."
 

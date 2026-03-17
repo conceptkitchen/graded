@@ -214,7 +214,7 @@ const slides = [
     content: (
       <div className="flex flex-col items-center justify-center h-full px-6">
         <h2 className="text-2xl sm:text-4xl font-bold text-white mb-10 text-center">
-          Built in <span className="text-green-500">48 hours.</span>
+          Built in <span className="text-green-500">3 hours.</span>
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl w-full mb-8">
           <div className="border border-zinc-700 rounded-xl p-4 bg-zinc-900/50 text-center">
@@ -292,7 +292,7 @@ const slides = [
           Solo founder. 92 expert AI consultants and agents. 21 purpose-built teams.
         </div>
         <div className="max-w-lg space-y-3 text-base text-zinc-400 mb-10">
-          <p>Built Graded in 48 hours. Deployed to 7 surfaces. Won 2 prizes.</p>
+          <p>Built Graded in 3 hours. Deployed to 7 surfaces. Won 2 prizes.</p>
           <p>Open source engine. 189+ attack patterns. Multi-model deep scan via <span className="text-purple-400">Kalibr</span>.</p>
         </div>
         <div className="border border-green-800 rounded-xl p-6 bg-green-950/20 max-w-md w-full">
