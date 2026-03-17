@@ -363,8 +363,7 @@ const slides = [
           Solo founder. 92 expert AI consultants and agents. 21 purpose-built teams.
         </div>
         <div className="max-w-lg space-y-3 text-base text-zinc-400 mb-10">
-          <p>Built Graded in 3 hours. Deployed to 7 surfaces. Won 2 prizes.</p>
-          <p>Open source engine. 212+ attack patterns. 6 MCP tools. Multi-model deep scan via <span className="text-purple-400">Kalibr</span>.</p>
+          <p>Open source engine. 212+ attack patterns. 6 MCP tools. 7 deployment surfaces. Multi-model deep scan via <span className="text-purple-400">Kalibr</span>.</p>
         </div>
         <div className="border border-green-800 rounded-xl p-6 bg-green-950/20 max-w-md w-full">
           <div className="text-green-400 text-xs uppercase tracking-widest mb-3 font-bold">Raising</div>
