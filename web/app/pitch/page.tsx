@@ -162,7 +162,7 @@ const slides = [
             </thead>
             <tbody>
               {[
-                ["MCP Servers", "✓", "✓", "✓", "—"],
+                ["MCP Servers", "✓", "✓", "✓", "✓"],
                 ["Tool Configs", "✓", "✓", "—", "—"],
                 ["API Endpoints", "—", "~", "✓", "—"],
                 ["URL / llms.txt Scanning", "—", "—", "—", "✓"],
@@ -172,6 +172,7 @@ const slides = [
                 ["AI Deep Scan", "—", "—", "~", "✓"],
                 ["Auto-Learning", "—", "—", "—", "✓"],
                 ["MCP Tool for Agents", "—", "—", "—", "✓"],
+                ["4-Gate CaMeL SDK", "—", "—", "—", "✓"],
               ].map(([feature, ...vals], i) => (
                 <tr key={i} className="border-b border-zinc-800/50">
                   <td className="py-1 sm:py-2 px-1 sm:px-3 text-zinc-300 font-medium">{feature}</td>
@@ -249,33 +250,51 @@ const slides = [
       </div>
     ),
   },
-  // SLIDE 8: BUSINESS MODEL — Three revenue layers
+  // SLIDE 8: BUSINESS MODEL — Four tiers
   {
     id: "business",
     content: (
-      <div className="flex flex-col items-center justify-center h-full px-6">
-        <h2 className="text-2xl sm:text-4xl font-bold text-white mb-10 text-center">
-          Three <span className="text-green-500">revenue layers.</span>
+      <div className="flex flex-col items-center justify-start h-full px-4 sm:px-6 pt-6 sm:pt-10">
+        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 text-center">
+          How much do you <span className="text-green-500">trust your AI?</span>
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl w-full mb-8">
-          <div className="border border-purple-800 rounded-xl p-5 bg-purple-950/20 text-center">
-            <div className="text-purple-400 text-xs uppercase tracking-widest mb-2 font-bold">Pro API</div>
-            <div className="text-lg font-bold text-white mb-2">Pay per scan</div>
-            <div className="text-sm text-zinc-400">API keys for developers. Scan at scale. MCP server integration.</div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl w-full mb-4">
+          <div className="border border-green-800 rounded-xl p-3 bg-green-950/20 text-center">
+            <div className="text-green-400 text-[10px] uppercase tracking-widest mb-1 font-bold">Open</div>
+            <div className="text-lg font-bold text-white mb-1">Free</div>
+            <div className="text-xs text-zinc-400 mb-2">Try it free. See what your AI is consuming.</div>
+            <div className="text-[10px] text-zinc-600">Web, CLI, Chrome, MCP &bull; 50 scans/day</div>
           </div>
-          <div className="border border-green-800 rounded-xl p-5 bg-green-950/20 text-center">
-            <div className="text-green-400 text-xs uppercase tracking-widest mb-2 font-bold">Free Scanner</div>
-            <div className="text-lg font-bold text-white mb-2">Growth engine</div>
-            <div className="text-sm text-zinc-400">Web, CLI, Chrome extension. Every scan grows the pattern library.</div>
+          <div className="border border-purple-800 rounded-xl p-3 bg-purple-950/20 text-center">
+            <div className="text-purple-400 text-[10px] uppercase tracking-widest mb-1 font-bold">Builder</div>
+            <div className="text-lg font-bold text-white mb-1">$29<span className="text-xs text-zinc-500">/mo</span></div>
+            <div className="text-xs text-zinc-400 mb-2">Protect your agent. API access at scale.</div>
+            <div className="text-[10px] text-zinc-600">10K scans/mo &bull; 100 deep scans &bull; Webhooks</div>
           </div>
-          <div className="border border-yellow-800 rounded-xl p-5 bg-yellow-950/20 text-center">
-            <div className="text-yellow-400 text-xs uppercase tracking-widest mb-2 font-bold">Enterprise</div>
-            <div className="text-lg font-bold text-white mb-2">&quot;Graded Verified&quot;</div>
-            <div className="text-sm text-zinc-400">Marketplace integration. Trust badges. Threat intelligence feed.</div>
+          <div className="border border-yellow-800 rounded-xl p-3 bg-yellow-950/20 text-center">
+            <div className="text-yellow-400 text-[10px] uppercase tracking-widest mb-1 font-bold">Shield</div>
+            <div className="text-lg font-bold text-white mb-1">$149<span className="text-xs text-zinc-500">/mo</span></div>
+            <div className="text-xs text-zinc-400 mb-2">Production middleware. The 4-gate security layer.</div>
+            <div className="text-[10px] text-zinc-600">50K scans &bull; CaMeL SDK &bull; Audit log &bull; 5 seats</div>
+          </div>
+          <div className="border border-red-800 rounded-xl p-3 bg-red-950/20 text-center">
+            <div className="text-red-400 text-[10px] uppercase tracking-widest mb-1 font-bold">Verified</div>
+            <div className="text-lg font-bold text-white mb-1">$499<span className="text-xs text-zinc-500">/mo</span></div>
+            <div className="text-xs text-zinc-400 mb-2">Trust badges for your platform.</div>
+            <div className="text-[10px] text-zinc-600">Unlimited &bull; Badges &bull; Threat feed &bull; Custom SLA</div>
           </div>
         </div>
-        <p className="text-sm text-zinc-500 text-center max-w-lg">
-          Every scan makes the product smarter. <span className="text-white font-semibold">The data is the moat.</span>
+        <div className="flex items-center gap-2 text-[10px] sm:text-xs text-zinc-500 mt-1">
+          <span className="text-green-400">See threats</span>
+          <span>&rarr;</span>
+          <span className="text-purple-400">Protect your agent</span>
+          <span>&rarr;</span>
+          <span className="text-yellow-400">Secure production</span>
+          <span>&rarr;</span>
+          <span className="text-red-400">Certify your platform</span>
+        </div>
+        <p className="text-xs text-zinc-500 text-center max-w-lg mt-3">
+          Every scan makes the engine smarter. <span className="text-white font-semibold">Integration depth is the moat.</span>
         </p>
       </div>
     ),
