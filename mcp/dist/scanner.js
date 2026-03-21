@@ -318,7 +318,7 @@ function checkP2SQL(text) {
         "\\bUPDATE\\s+\\w+\\s+SET\\b",
         "\\bALTER\\s+TABLE\\b",
         "\\bTRUNCATE\\s+TABLE\\b",
-        "\\bEXEC(?:UTE)?\\s*\\(",
+        "(?<!\\.)\\bEXEC(?:UTE)?\\s*\\(", // Negative lookbehind excludes method calls like router.execute()
         // Semantic SQL injection via natural language
         "show\\s+me\\s+all\\s+(?:users?|passwords?|credentials?|records?|data)",
         "dump\\s+(?:the\\s+)?(?:database|table|schema|users?|passwords?)",

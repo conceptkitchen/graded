@@ -366,7 +366,7 @@ function checkP2SQL(text: string): Finding[] {
     "\\bUPDATE\\s+\\w+\\s+SET\\b",
     "\\bALTER\\s+TABLE\\b",
     "\\bTRUNCATE\\s+TABLE\\b",
-    "\\bEXEC(?:UTE)?\\s*\\(",
+    "(?<!\\.)\\bEXEC(?:UTE)?\\s*\\(",  // Negative lookbehind excludes method calls like router.execute()
     "show\\s+me\\s+all\\s+(?:users?|passwords?|credentials?|records?|data)",
     "dump\\s+(?:the\\s+)?(?:database|table|schema|users?|passwords?)",
     "(?:list|get|fetch|retrieve|select)\\s+(?:all\\s+)?(?:users?|accounts?|passwords?|credentials?)\\s+(?:from|in)\\s+(?:the\\s+)?(?:database|table|system)",
