@@ -9,6 +9,7 @@ export declare const TOTAL_STATIC_PATTERNS: number;
 export interface Finding {
     category: string;
     severity: "critical" | "high" | "medium" | "low";
+    confidence?: "high" | "medium" | "low";
     description: string;
     evidence: string;
 }

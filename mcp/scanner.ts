@@ -13,6 +13,7 @@ export const TOTAL_STATIC_PATTERNS = BASE_PATTERN_COUNT + AUGUSTUS_PATTERN_COUNT
 export interface Finding {
   category: string;
   severity: "critical" | "high" | "medium" | "low";
+  confidence?: "high" | "medium" | "low";
   description: string;
   evidence: string;
 }
@@ -40,12 +41,69 @@ export interface ScanResult {
 
 const MAX_TEXT_LENGTH = 50_000;
 
+/**
+ * P2: Detect if a match index falls inside a markdown code fence (``` ... ```).
+ * Returns true if the position is inside a code block.
+ */
+function isInCodeBlock(text: string, index: number): boolean {
+  const fencePattern = /^(`{3,}|~{3,}).*$/gm;
+  let inBlock = false;
+  let blockStart = -1;
+  let match;
+  while ((match = fencePattern.exec(text)) !== null) {
+    if (!inBlock) {
+      inBlock = true;
+      blockStart = match.index;
+    } else {
+      // Closing fence — check if our index falls inside
+      const blockEnd = match.index + match[0].length;
+      if (index >= blockStart && index <= blockEnd) return true;
+      inBlock = false;
+    }
+  }
+  // If still in an unclosed block and index is after the opening fence
+  if (inBlock && index >= blockStart) return true;
+  return false;
+}
+
+/**
+ * Pre-compute all code block ranges for efficient repeated lookups.
+ */
+function getCodeBlockRanges(text: string): Array<[number, number]> {
+  const ranges: Array<[number, number]> = [];
+  const fencePattern = /^(`{3,}|~{3,}).*$/gm;
+  let openStart = -1;
+  let inBlock = false;
+  let match;
+  while ((match = fencePattern.exec(text)) !== null) {
+    if (!inBlock) {
+      inBlock = true;
+      openStart = match.index;
+    } else {
+      ranges.push([openStart, match.index + match[0].length]);
+      inBlock = false;
+    }
+  }
+  // Unclosed block extends to end
+  if (inBlock) ranges.push([openStart, text.length]);
+  return ranges;
+}
+
+function isInCodeBlockFast(ranges: Array<[number, number]>, index: number): boolean {
+  for (const [start, end] of ranges) {
+    if (index >= start && index <= end) return true;
+    if (start > index) break; // ranges are sorted
+  }
+  return false;
+}
+
 function searchPatterns(
   text: string,
   patterns: string[],
   category: string,
   severity: Finding["severity"],
-  descTemplate: string
+  descTemplate: string,
+  codeBlockRanges?: Array<[number, number]>
 ): Finding[] {
   const findings: Finding[] = [];
   const textLower = text.toLowerCase();
@@ -59,9 +117,17 @@ function searchPatterns(
         const start = Math.max(0, match.index - 20);
         const end = Math.min(text.length, match.index + match[0].length + 20);
         const context = text.slice(start, end).trim();
+
+        // P2: Downgrade confidence if match is inside a code block
+        let confidence: Finding["confidence"] = "high";
+        if (codeBlockRanges && isInCodeBlockFast(codeBlockRanges, match.index)) {
+          confidence = "low";
+        }
+
         findings.push({
           category,
           severity,
+          confidence,
           description: descTemplate.replace("{evidence}", evidence),
           evidence: context,
         });
@@ -91,7 +157,7 @@ function dedupe(findings: Finding[]): Finding[] {
 }
 
 // === Category 1: Jailbreak ===
-function checkJailbreak(text: string): Finding[] {
+function checkJailbreak(text: string, cbr: Array<[number, number]>): Finding[] {
   const patterns = [
     "\\bdan\\b(?:\\s+mode)?",
     "developer\\s+mode",
@@ -112,11 +178,11 @@ function checkJailbreak(text: string): Finding[] {
     "in\\s+this\\s+hypothetical",
     "for\\s+(?:educational|research|academic)\\s+purposes\\s+only",
   ];
-  return searchPatterns(text, patterns, "Jailbreak", "critical", 'Jailbreak pattern: "{evidence}"');
+  return searchPatterns(text, patterns, "Jailbreak", "critical", 'Jailbreak pattern: "{evidence}"', cbr);
 }
 
 // === Category 2: Instruction Override ===
-function checkInstructionOverride(text: string): Finding[] {
+function checkInstructionOverride(text: string, cbr: Array<[number, number]>): Finding[] {
   const patterns = [
     "ignore\\s+(?:all\\s+)?previous\\s+instructions",
     "disregard\\s+(?:all\\s+)?(?:prior|above|previous|safety)",
@@ -134,11 +200,11 @@ function checkInstructionOverride(text: string): Finding[] {
     "(?:forget|clear|reset)\\s+(?:your\\s+)?(?:context|memory|instructions)",
     "(?:new|updated)\\s+system\\s+(?:prompt|message|instructions)",
   ];
-  return searchPatterns(text, patterns, "Instruction Override", "critical", 'Override attempt: "{evidence}"');
+  return searchPatterns(text, patterns, "Instruction Override", "critical", 'Override attempt: "{evidence}"', cbr);
 }
 
 // === Category 3: Data Exfiltration ===
-function checkDataExfiltration(text: string): Finding[] {
+function checkDataExfiltration(text: string, cbr: Array<[number, number]>): Finding[] {
   const findings: Finding[] = [];
   const textLower = text.toLowerCase();
 
@@ -160,9 +226,11 @@ function checkDataExfiltration(text: string): Finding[] {
       const urlPattern = /https?:\/\/[^\s<>"')\]]+/gi;
       const nearbyUrls = nearby.match(urlPattern) || [];
       for (const url of nearbyUrls) {
+        const urlConfidence: Finding["confidence"] = isInCodeBlockFast(cbr, ctxMatch.index) ? "low" : "high";
         findings.push({
           category: "Data Exfiltration",
           severity: "critical",
+          confidence: urlConfidence,
           description: "URL found near exfiltration verb",
           evidence: url,
         });
@@ -177,7 +245,7 @@ function checkDataExfiltration(text: string): Finding[] {
     "(?:copy|paste|dump)\\s+(?:your\\s+)?(?:entire|full|complete)\\s+(?:prompt|context|instructions)",
     "what\\s+were\\s+you\\s+told",
   ];
-  findings.push(...searchPatterns(text, leakPatterns, "Data Exfiltration", "critical", 'Extraction attempt: "{evidence}"'));
+  findings.push(...searchPatterns(text, leakPatterns, "Data Exfiltration", "critical", 'Extraction attempt: "{evidence}"', cbr));
 
   const webhookPatterns = [
     "webhook[.\\-_]?(?:url|endpoint|site)",
@@ -187,13 +255,13 @@ function checkDataExfiltration(text: string): Finding[] {
     "burpcollaborator",
     "interact\\.sh",
   ];
-  findings.push(...searchPatterns(text, webhookPatterns, "Data Exfiltration", "critical", 'Suspicious endpoint: "{evidence}"'));
+  findings.push(...searchPatterns(text, webhookPatterns, "Data Exfiltration", "critical", 'Suspicious endpoint: "{evidence}"', cbr));
 
   return dedupe(findings);
 }
 
 // === Category 4: Credential Harvesting ===
-function checkCredentialHarvesting(text: string): Finding[] {
+function checkCredentialHarvesting(text: string, cbr: Array<[number, number]>): Finding[] {
   const patterns = [
     "(?:paste|enter|provide|input|share|give\\s+me)\\s+(?:your\\s+)?(?:\\w+\\s+)?(?:api|secret)\\s*key",
     "(?:paste|enter|provide|input|share|give\\s+me)\\s+(?:your\\s+)?password",
@@ -216,11 +284,11 @@ function checkCredentialHarvesting(text: string): Finding[] {
     "(?:store|save|cache)\\s+(?:these\\s+)?credentials",
     "credentials?\\s+in\\s+(?:your\\s+)?(?:session|context|memory)",
   ];
-  return searchPatterns(text, patterns, "Credential Harvesting", "critical", 'Credential harvesting: "{evidence}"');
+  return searchPatterns(text, patterns, "Credential Harvesting", "critical", 'Credential harvesting: "{evidence}"', cbr);
 }
 
 // === Category 5: Hidden Text ===
-function checkHiddenText(text: string): Finding[] {
+function checkHiddenText(text: string, _cbr: Array<[number, number]>): Finding[] {
   const findings: Finding[] = [];
 
   const invisibleChars: Record<string, string> = {
@@ -241,6 +309,7 @@ function checkHiddenText(text: string): Finding[] {
       findings.push({
         category: "Hidden Text",
         severity: "medium",
+        confidence: "high",
         description: `Invisible character: ${name} (x${count})`,
         evidence: `Found ${count} instance(s) of ${name}`,
       });
@@ -261,6 +330,7 @@ function checkHiddenText(text: string): Finding[] {
       findings.push({
         category: "Hidden Text",
         severity: "medium",
+        confidence: "high",
         description: `Text direction override: ${name} (x${count})`,
         evidence: `Found ${count} instance(s) of ${name}`,
       });
@@ -275,6 +345,7 @@ function checkHiddenText(text: string): Finding[] {
       findings.push({
         category: "Hidden Text",
         severity: "medium",
+        confidence: "high",
         description: "Mixed script detected (possible homoglyph attack)",
         evidence: `Latin mixed with ${hasCyrillic ? "Cyrillic" : "Greek"}`,
       });
@@ -285,7 +356,7 @@ function checkHiddenText(text: string): Finding[] {
 }
 
 // === Category 6: Obfuscated Payloads ===
-function checkObfuscatedPayloads(text: string): Finding[] {
+function checkObfuscatedPayloads(text: string, cbr: Array<[number, number]>): Finding[] {
   const findings: Finding[] = [];
 
   const b64Pattern = /(?<![A-Za-z0-9+/])([A-Za-z0-9+/]{20,}={0,2})(?![A-Za-z0-9+/])/g;
@@ -301,9 +372,11 @@ function checkObfuscatedPayloads(text: string): Finding[] {
         (c) => c.charCodeAt(0) >= 32 && c.charCodeAt(0) < 127
       ).length;
       if (decoded.length > 4 && printable / decoded.length > 0.7) {
+        const b64Confidence: Finding["confidence"] = isInCodeBlockFast(cbr, match.index) ? "low" : "medium";
         findings.push({
           category: "Obfuscated Payload",
           severity: "medium",
+          confidence: b64Confidence,
           description: "Base64-encoded text decodes to readable content",
           evidence: `${match[1].slice(0, 40)}... -> ${decoded.slice(0, 60)}`,
         });
@@ -323,14 +396,14 @@ function checkObfuscatedPayloads(text: string): Finding[] {
     "os\\s*\\.\\s*system\\s*\\(",
   ];
   findings.push(
-    ...searchPatterns(text, evalPatterns, "Obfuscated Payload", "medium", 'Code execution pattern: "{evidence}"')
+    ...searchPatterns(text, evalPatterns, "Obfuscated Payload", "medium", 'Code execution pattern: "{evidence}"', cbr)
   );
 
   return dedupe(findings);
 }
 
 // === Category 7: Privilege Escalation ===
-function checkPrivilegeEscalation(text: string): Finding[] {
+function checkPrivilegeEscalation(text: string, cbr: Array<[number, number]>): Finding[] {
   const patterns = [
     "as\\s+(?:a\\s+)?system\\s+administrator",
     "with\\s+root\\s+access",
@@ -346,11 +419,11 @@ function checkPrivilegeEscalation(text: string): Finding[] {
     "override\\s+(?:security|safety|access)\\s+(?:controls|checks|restrictions)",
     "(?:disable|turn\\s+off|remove)\\s+(?:safety|security)\\s+(?:checks|features|controls)",
   ];
-  return searchPatterns(text, patterns, "Privilege Escalation", "high", 'Privilege escalation: "{evidence}"');
+  return searchPatterns(text, patterns, "Privilege Escalation", "high", 'Privilege escalation: "{evidence}"', cbr);
 }
 
 // === Category 8: Social Engineering ===
-function checkSocialEngineering(text: string): Finding[] {
+function checkSocialEngineering(text: string, cbr: Array<[number, number]>): Finding[] {
   const patterns = [
     "you\\s+can\\s+do\\s+anything",
     "no\\s+restrictions?\\s+appl(?:y|ies)",
@@ -365,11 +438,11 @@ function checkSocialEngineering(text: string): Finding[] {
     "(?:real|actual|true)\\s+(?:ai|model|version)\\s+(?:without|beyond|past)\\s+(?:censorship|filters|restrictions)",
     "(?:stop|quit)\\s+(?:being|acting)\\s+(?:so\\s+)?(?:cautious|careful|restricted|limited)",
   ];
-  return searchPatterns(text, patterns, "Social Engineering", "high", 'Social engineering: "{evidence}"');
+  return searchPatterns(text, patterns, "Social Engineering", "high", 'Social engineering: "{evidence}"', cbr);
 }
 
 // === Category 10: P2SQL (Prompt-to-SQL Injection) ===
-function checkP2SQL(text: string): Finding[] {
+function checkP2SQL(text: string, cbr: Array<[number, number]>): Finding[] {
   const patterns = [
     // Direct SQL injection keywords
     "\\bDROP\\s+TABLE\\b",
@@ -394,11 +467,11 @@ function checkP2SQL(text: string): Finding[] {
     "(?<!\\.)\\bBENCHMARK\\s*\\(",  // Exclude method calls like benchmark.run()
     "(?<!\\.)\\bSLEEP\\s*\\(",  // Exclude method calls like time.sleep()
   ];
-  return searchPatterns(text, patterns, "P2SQL Injection", "critical", 'SQL injection pattern: "{evidence}"');
+  return searchPatterns(text, patterns, "P2SQL Injection", "critical", 'SQL injection pattern: "{evidence}"', cbr);
 }
 
 // === Category 11: XSS-via-AI ===
-function checkXSSviaAI(text: string): Finding[] {
+function checkXSSviaAI(text: string, cbr: Array<[number, number]>): Finding[] {
   const patterns = [
     // Direct XSS payloads
     "<script[\\s>]",
@@ -420,11 +493,11 @@ function checkXSSviaAI(text: string): Finding[] {
     "PHNjcmlwdD4", // base64 for "<script>"
     "amF2YXNjcmlwdDo", // base64 for "javascript:"
   ];
-  return searchPatterns(text, patterns, "XSS-via-AI", "high", 'XSS-via-AI pattern: "{evidence}"');
+  return searchPatterns(text, patterns, "XSS-via-AI", "high", 'XSS-via-AI pattern: "{evidence}"', cbr);
 }
 
 // === Category 12: Agent Abuse ===
-function checkAgentAbuse(text: string): Finding[] {
+function checkAgentAbuse(text: string, cbr: Array<[number, number]>): Finding[] {
   const patterns = [
     // Tool invocation attempts
     "call\\s+the\\s+\\w+\\s+(?:tool|function|api)",
@@ -449,11 +522,11 @@ function checkAgentAbuse(text: string): Finding[] {
     "(?:database|db|sql)\\s+(?:tool|function).*?(?:drop|delete|truncate|wipe)",
     "(?:browser|web|http)\\s+(?:tool|function).*?(?:navigate|visit|open).*?(?:attacker|evil|malicious)",
   ];
-  return searchPatterns(text, patterns, "Agent Abuse", "critical", 'Agent abuse pattern: "{evidence}"');
+  return searchPatterns(text, patterns, "Agent Abuse", "critical", 'Agent abuse pattern: "{evidence}"', cbr);
 }
 
 // === All checkers including hybrid threat categories ===
-const ALL_CHECKERS: [string, (text: string) => Finding[]][] = [
+const ALL_CHECKERS: [string, (text: string, cbr: Array<[number, number]>) => Finding[]][] = [
   ["Jailbreak patterns", checkJailbreak],
   ["Instruction override", checkInstructionOverride],
   ["Data exfiltration", checkDataExfiltration],
@@ -476,19 +549,23 @@ function calculateScore(checks: CheckResult[]): ScoreData {
   let lowCount = 0;
   let totalFindings = 0;
 
+  // P3: Confidence weights — low-confidence findings still appear but barely affect the grade
+  const CONFIDENCE_WEIGHT: Record<string, number> = { high: 1.0, medium: 0.5, low: 0.1 };
+
   for (const check of checks) {
     for (const f of check.findings) {
       totalFindings++;
+      const weight = CONFIDENCE_WEIGHT[f.confidence ?? "high"];
       switch (f.severity) {
-        case "critical": score -= 25; criticalCount++; break;
-        case "high": score -= 15; highCount++; break;
-        case "medium": score -= 10; mediumCount++; break;
-        case "low": score -= 5; lowCount++; break;
+        case "critical": score -= 25 * weight; criticalCount++; break;
+        case "high": score -= 15 * weight; highCount++; break;
+        case "medium": score -= 10 * weight; mediumCount++; break;
+        case "low": score -= 5 * weight; lowCount++; break;
       }
     }
   }
 
-  score = Math.max(0, score);
+  score = Math.max(0, Math.round(score));
 
   let grade: string;
   if (score >= 90) grade = "A";
@@ -510,8 +587,11 @@ export function scanPrompt(
 ): ScanResult {
   const truncated = text.slice(0, MAX_TEXT_LENGTH);
 
+  // P2: Pre-compute code block ranges once for all checkers
+  const codeBlockRanges = getCodeBlockRanges(truncated);
+
   const checks: CheckResult[] = ALL_CHECKERS.map(([name, checker]) => {
-    const findings = checker(truncated);
+    const findings = checker(truncated, codeBlockRanges);
     return { checkName: name, passed: findings.length === 0, findings };
   });
 
@@ -526,9 +606,11 @@ export function scanPrompt(
         const start = Math.max(0, match.index - 20);
         const end = Math.min(truncated.length, match.index + match[0].length + 20);
         const context = truncated.slice(start, end).trim();
+        const augConfidence: Finding["confidence"] = isInCodeBlockFast(codeBlockRanges, match.index) ? "low" : "high";
         augustusFindings.push({
           category: ap.category,
           severity: ap.severity,
+          confidence: augConfidence,
           description: `[Augustus] ${ap.description}`,
           evidence: context,
         });
@@ -570,9 +652,11 @@ export function scanPrompt(
           const start = Math.max(0, match.index - 20);
           const end = Math.min(truncated.length, match.index + match[0].length + 20);
           const context = truncated.slice(start, end).trim();
+          const learnedConfidence: Finding["confidence"] = isInCodeBlockFast(codeBlockRanges, match.index) ? "low" : "high";
           learnedFindings.push({
             category: ep.category,
             severity: ep.severity,
+            confidence: learnedConfidence,
             description: `[Learned] ${ep.description}`,
             evidence: context,
           });
