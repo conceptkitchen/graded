@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { AUGUSTUS_PATTERN_COUNT } from "../../../lib/augustus-patterns";
+import { TOTAL_STATIC_PATTERNS } from "../../../lib/scanner";
 import { getLearnedPatternsCount } from "../../../lib/pattern-learner";
 import { saveLearnedPattern, getPersistedPatterns, logSync } from "../../../lib/db";
-
-const BASE_PATTERN_COUNT = 120;
 
 const GITHUB_HEADERS = {
   Accept: "application/vnd.github.v3+json",
@@ -308,10 +307,10 @@ export async function GET() {
 
   return NextResponse.json({
     library: {
-      base: BASE_PATTERN_COUNT,
+      base: TOTAL_STATIC_PATTERNS,
       augustus: AUGUSTUS_PATTERN_COUNT,
       learned,
-      total: BASE_PATTERN_COUNT + AUGUSTUS_PATTERN_COUNT + learned,
+      total: TOTAL_STATIC_PATTERNS + learned,
     },
     sources: [
       { name: "Augustus", repo: "praetorian-inc/augustus", type: "structured probes" },
@@ -356,14 +355,14 @@ export async function POST() {
       sourcesChecked: 3,
       filesScanned: totalChecked,
       newPatternsAdded: totalNew,
-      totalLibrary: BASE_PATTERN_COUNT + AUGUSTUS_PATTERN_COUNT + learned,
+      totalLibrary: TOTAL_STATIC_PATTERNS + learned,
     },
     sources: [augustus, cyberalb, claritas],
     library: {
-      base: BASE_PATTERN_COUNT,
+      base: TOTAL_STATIC_PATTERNS,
       augustus: AUGUSTUS_PATTERN_COUNT,
       learned,
-      total: BASE_PATTERN_COUNT + AUGUSTUS_PATTERN_COUNT + learned,
+      total: TOTAL_STATIC_PATTERNS + learned,
     },
     timestamp: new Date().toISOString(),
   });

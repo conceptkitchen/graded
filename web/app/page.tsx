@@ -454,7 +454,7 @@ export default function Home() {
                   <div className="mt-4 border-t border-green-800/30 pt-3">
                     <div className="flex items-center gap-3 flex-wrap">
                       <span className="text-xs text-green-400 font-mono">
-                        {"\uD83E\uDDEC"} Pattern Library: 120 base + 62 Augustus{patternLibrary.learned > 0 ? ` + ${patternLibrary.learned} learned` : ""} = {patternLibrary.total} total
+                        {"\uD83E\uDDEC"} Pattern Library: {patternLibrary.base} static{patternLibrary.learned > 0 ? ` + ${patternLibrary.learned} learned` : ""} = {patternLibrary.total} total
                       </span>
                       {patternLibrary.newThisScan > 0 && (
                         <span className="text-xs bg-green-900/50 text-green-300 px-2 py-0.5 rounded-full animate-pulse">
