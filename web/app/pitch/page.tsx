@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { TOTAL_STATIC_PATTERNS } from "../lib/scanner";
 
 const slides = [
   // SLIDE 1: HOOK — The scare
@@ -163,7 +164,7 @@ const slides = [
         <div className="grid grid-cols-2 gap-3 max-w-2xl w-full mb-4">
           <div className="border border-green-800 rounded-xl p-3 bg-green-950/20">
             <div className="text-green-400 text-[10px] uppercase tracking-widest mb-1 font-bold">Layer 1 &mdash; Regex</div>
-            <div className="text-2xl font-bold text-white">212+</div>
+            <div className="text-2xl font-bold text-white">{TOTAL_STATIC_PATTERNS}+</div>
             <div className="text-xs text-zinc-400">patterns. Instant. Deterministic.</div>
           </div>
           <div className="border border-purple-800 rounded-xl p-3 bg-purple-950/20">
@@ -242,7 +243,7 @@ const slides = [
           <div className="grid grid-cols-3 gap-2 sm:gap-3 text-center text-[10px] sm:text-xs">
             <div>
               <div className="text-white font-bold mb-1">Base Engine</div>
-              <div className="text-zinc-500">120 hand-built + 62 open source + 30 hybrid. 11 attack categories.</div>
+              <div className="text-zinc-500">{TOTAL_STATIC_PATTERNS} patterns across 11 attack categories. Hand-built + open source + hybrid.</div>
             </div>
             <div>
               <div className="text-white font-bold mb-1">Open Source Sync</div>
@@ -272,7 +273,7 @@ const slides = [
             <div className="text-[10px] text-zinc-600 mt-1">Web, CLI, API, npm, MCP server, Chrome extension, marketplace scanner</div>
           </div>
           <div className="border border-purple-800 rounded-xl p-3 bg-purple-950/20 text-center">
-            <div className="text-3xl font-black text-purple-400 mb-1">212+</div>
+            <div className="text-3xl font-black text-purple-400 mb-1">{TOTAL_STATIC_PATTERNS}+</div>
             <div className="text-xs text-zinc-400 font-medium">Attack patterns</div>
             <div className="text-[10px] text-zinc-600 mt-1">3 sources: hand-built + open source + AI-generated hybrid</div>
           </div>
@@ -377,7 +378,7 @@ const slides = [
           I built an AI agent that runs my entire business. Then I realized anyone could inject instructions into the prompts it consumes. So I built Graded.
         </div>
         <div className="max-w-lg space-y-3 text-sm text-zinc-400 mb-8">
-          <p>Open source engine. 212+ attack patterns. 6 MCP tools. 7 deployment surfaces. Multi-model deep scan via <span className="text-purple-400">Kalibr</span>.</p>
+          <p>Open source engine. {TOTAL_STATIC_PATTERNS}+ attack patterns. 6 MCP tools. 7 deployment surfaces. Multi-model deep scan via <span className="text-purple-400">Kalibr</span>.</p>
         </div>
         <div className="border border-green-800 rounded-xl p-6 bg-green-950/20 max-w-md w-full">
           <div className="text-green-400 text-xs uppercase tracking-widest mb-3 font-bold">Raising</div>

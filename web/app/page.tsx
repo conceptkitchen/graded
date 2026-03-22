@@ -479,7 +479,7 @@ export default function Home() {
               {
                 icon: "\uD83D\uDD0D",
                 title: `${livePatternCount}+ Attack Patterns`,
-                desc: "11 attack categories. 120 base + 62 Augustus open source + 30 hybrid patterns + AI-learned. DAN jailbreaks, ChatML injection, RAG poisoning, P2SQL injection, agent abuse, and more.",
+                desc: `11 attack categories. ${TOTAL_STATIC_PATTERNS} static patterns + AI-learned. DAN jailbreaks, ChatML injection, RAG poisoning, P2SQL injection, agent abuse, and more.`,
               },
               {
                 icon: "\uD83E\uDDE0",
